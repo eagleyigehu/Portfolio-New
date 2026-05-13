@@ -3,18 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- ============================================================
-  修改这里：把项目标题填进去
-  ============================================================ -->
 <title>Scientific Illustration — Emma Hu</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
 <style>
-  /* ── 颜色变量（和主页保持一致，不需要改） ── */
   :root {
     --ink: #1a1a18;
     --ink-2: #4a4840;
@@ -27,17 +20,8 @@
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-
   body {
-    background: linear-gradient(
-      to bottom,
-      #9dc3cc 0%,
-      #bbced2 20%,
-      #dbddd7 40%,
-      #ebe4da 60%,
-      #edd7c8 80%,
-      #f6cbbd 100%
-    );
+    background: linear-gradient(to bottom, #9dc3cc 0%, #bbced2 20%, #dbddd7 40%, #ebe4da 60%, #edd7c8 80%, #f6cbbd 100%);
     background-attachment: scroll;
     background-size: 100% 500vh;
     background-repeat: no-repeat;
@@ -48,8 +32,6 @@
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
-
-  /* ── 导航 ── */
   nav {
     display: flex;
     align-items: center;
@@ -69,9 +51,6 @@
     text-transform: uppercase;
     color: var(--ink-2);
     text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
     transition: color 0.2s;
   }
   .nav-back:hover { color: var(--accent); }
@@ -80,15 +59,11 @@
     font-size: 1rem;
     color: var(--ink);
   }
-
-  /* ── 页面内容容器 ── */
   .project-wrap {
     max-width: 900px;
     margin: 0 auto;
     padding: 5rem 2.5rem 8rem;
   }
-
-  /* ── 标题区 ── */
   .project-eyebrow {
     font-family: var(--mono);
     font-size: 0.7rem;
@@ -115,7 +90,6 @@
     padding: 1.2rem 0;
     margin-bottom: 3rem;
   }
-  .meta-item {}
   .meta-label {
     font-family: var(--mono);
     font-size: 0.62rem;
@@ -130,16 +104,12 @@
     font-size: 0.85rem;
     color: var(--ink-2);
   }
-
-  /* ── 主图 ── */
   .project-hero-img {
     width: 100%;
     height: auto;
     display: block;
     margin-bottom: 3rem;
   }
-
-  /* ── 正文段落 ── */
   .project-body {
     font-family: var(--serif);
     font-size: 1.1rem;
@@ -149,8 +119,6 @@
     max-width: 680px;
   }
   .project-body strong { color: var(--ink); font-weight: 500; }
-
-  /* ── 小标题 ── */
   .project-heading {
     font-family: var(--serif);
     font-size: 1.4rem;
@@ -160,15 +128,12 @@
     border-left: 2px solid var(--accent);
     padding-left: 1rem;
   }
-
-  /* ── 图片网格（多图展示用） ── */
   .image-grid {
     display: grid;
     gap: 1rem;
     margin: 2rem 0;
   }
   .image-grid.cols-2 { grid-template-columns: 1fr 1fr; }
-  .image-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
   .image-grid img {
     width: 100%;
     height: auto;
@@ -181,35 +146,11 @@
     letter-spacing: 0.08em;
     margin-top: 0.5rem;
   }
-
-  /* ── 引用块 ── */
-  blockquote {
-    border-left: 2px solid var(--rule);
-    padding: 0.5rem 0 0.5rem 1.5rem;
-    margin: 2rem 0;
-    font-style: italic;
-    color: var(--ink-3);
-    font-size: 1rem;
+  .divider {
+    border: none;
+    border-top: 0.5px solid var(--rule);
+    margin: 4rem 0;
   }
-
-  /* ── 标签 ── */
-  .tag-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin: 2rem 0;
-  }
-  .tag {
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.3rem 0.65rem;
-    border: 0.5px solid var(--rule);
-    color: var(--ink-2);
-  }
-
-  /* ── 返回 / 下一个项目导航 ── */
   .project-nav {
     display: flex;
     justify-content: space-between;
@@ -228,132 +169,90 @@
     transition: color 0.2s;
   }
   .project-nav a:hover { color: var(--accent); }
-
   @media (max-width: 640px) {
     .project-wrap { padding: 3rem 1.2rem 5rem; }
-    .image-grid.cols-2, .image-grid.cols-3 { grid-template-columns: 1fr; }
+    .image-grid.cols-2 { grid-template-columns: 1fr; }
     .project-meta { gap: 0.8rem 1.5rem; }
   }
 </style>
 </head>
 <body>
 
-<!-- 导航 -->
 <nav>
   <a href="index.html" class="nav-back">← Back</a>
-  <!-- ▼ 改成项目标题 -->
   <span class="nav-title">Scientific Illustration</span>
 </nav>
 
 <div class="project-wrap">
 
-  <!-- ══════════════════════════════════════════
-    ▼ 修改区域 START
-    每个项目复制这个文件，改下面的内容即可
-  ══════════════════════════════════════════ -->
+  <!-- ─────────────────────────────────────
+    WORK 2 — most recent first
+  ───────────────────────────────────── -->
 
-  <!-- 类别标签（mono小字） -->
-  <p class="project-eyebrow">Scientific Illustration · 2024</p>
+  <p class="project-eyebrow">Scientific Illustration · 2026</p>
+  <h1 class="project-title">Chinese Crested Tern / Greater Crested Tern</h1>
 
-  <!-- 主标题 -->
-  <h1 class="project-title">Scientific Illustration</h1>
-
-  <!-- 项目信息栏：改 meta-value 里的文字 -->
   <div class="project-meta">
     <div class="meta-item">
       <span class="meta-label">Year</span>
-      <span class="meta-value">2024</span>
+      <span class="meta-value">2026</span>
     </div>
     <div class="meta-item">
       <span class="meta-label">Medium</span>
-      <span class="meta-value">Watercolour, Digital</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-label">Context</span>
-      <span class="meta-value">UAL Illustration</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-label">Role</span>
-      <span class="meta-value">Illustrator & Researcher</span>
+      <span class="meta-value">Gouache, colored pencil, and Adobe Photoshop</span>
     </div>
   </div>
 
-  <!-- ▼ 主图：把 src 换成你的图片文件名 -->
-  <img class="project-hero-img" src="1.png" alt="Scientific Illustration hero image"/>
+  <img class="project-hero-img" src="scientific illustration2.png" alt="Scientific Illustration 2"/>
 
-  <!-- ▼ 正文：直接改文字 -->
-  <p class="project-body">
-    在这里写项目介绍。描述这个项目的背景、目的和你的工作方式。
-    可以分多段写，每段用 &lt;p class="project-body"&gt; 包起来。
-  </p>
-  <p class="project-body">
-    This project explores the intersection of scientific accuracy and visual storytelling. 
-    Each illustration was developed through <strong>extensive field observation</strong> 
-    and cross-referenced with specimen collections.
-  </p>
+  <div class="image-grid">
+    <div>
+      <img src="scientific illustration 2-detail.jpg" alt="Detail"/>
+      <p class="img-caption">Detail</p>
+    </div>
+  </div>
 
-  <!-- ▼ 小标题 -->
-  <h2 class="project-heading">Process</h2>
 
-  <p class="project-body">
-    描述你的创作过程。比如：从野外观察到草稿，再到最终水彩稿的流程。
-  </p>
+  <!-- ─────────────────────────────────────
+    WORK 1
+  ───────────────────────────────────── -->
 
-  <!-- ▼ 两列图片网格：把 src 换成你的图片 -->
+  <hr class="divider"/>
+
+  <p class="project-eyebrow">Scientific Illustration · 2026</p>
+  <h2 class="project-title">Cedar Waxwing</h2>
+
+  <div class="project-meta">
+    <div class="meta-item">
+      <span class="meta-label">Year</span>
+      <span class="meta-value">2026</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Medium</span>
+      <span class="meta-value">Watercolour</span>
+    </div>
+  </div>
+
+  <img class="project-hero-img" src="scientific illustration 1.png" alt="Scientific Illustration 1"/>
+
   <div class="image-grid cols-2">
     <div>
-      <img src="1.png" alt="Process sketch"/>
-      <p class="img-caption">Initial field sketches</p>
+      <img src="scientific illustration 1-detail.png" alt="Detail"/>
+      <p class="img-caption">Detail</p>
     </div>
     <div>
-      <img src="1.png" alt="Final illustration"/>
-      <p class="img-caption">Final watercolour</p>
+      <img src="scientific illustration 1-process.png" alt="Process"/>
+      <p class="img-caption">Process</p>
     </div>
   </div>
 
-  <!-- ▼ 引用/注解 -->
-  <blockquote>
-    "Scientific illustration bridges the gap between data and understanding —
-    making the invisible visible."
-  </blockquote>
 
-  <!-- ▼ 三列图片（可选，不需要就删掉这段） -->
-  <h2 class="project-heading">Details</h2>
-  <div class="image-grid cols-3">
-    <div>
-      <img src="1.png" alt="Detail 1"/>
-      <p class="img-caption">Plumage detail</p>
-    </div>
-    <div>
-      <img src="1.png" alt="Detail 2"/>
-      <p class="img-caption">Habitat context</p>
-    </div>
-    <div>
-      <img src="1.png" alt="Detail 3"/>
-      <p class="img-caption">Anatomical notes</p>
-    </div>
-  </div>
-
-  <!-- ▼ 标签：改成你的关键词 -->
-  <div class="tag-list">
-    <span class="tag">Scientific Illustration</span>
-    <span class="tag">Watercolour</span>
-    <span class="tag">Avian Ecology</span>
-    <span class="tag">UAL</span>
-  </div>
-
-  <!-- ══════════════════════════════════════════
-    ▼ 修改区域 END
-  ══════════════════════════════════════════ -->
-
-  <!-- 底部导航：改链接和文字 -->
+  <!-- Bottom nav -->
   <div class="project-nav">
     <a href="index.html">← All Projects</a>
-    <!-- ▼ 改成下一个项目的文件名和标题 -->
-    <a href="project-02.html">Marine Biology Illustration →</a>
+    <a href="project-02.html">Marine Biology Scientific Illustration →</a>
   </div>
 
 </div>
-
 </body>
 </html>
