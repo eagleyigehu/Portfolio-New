@@ -13,14 +13,11 @@
 <style>
   :root {
     --ink: #1a1a18;
-    --ink-2: #4a4a46;
-    --ink-3: #8a8a84;
-    --paper: #f5f2eb;
-    --paper-2: #edeae2;
-    --paper-3: #e4e0d6;
-    --accent: #2d5016;
-    --accent-warm: #7a4a1a;
-    --rule: rgba(26,26,24,0.12);
+    --ink-2: #4a4844;
+    --ink-3: #8a8680;
+    --accent: #4a7078;
+    --accent-warm: #c07858;
+    --rule: rgba(26,24,20,0.11);
     --serif: 'EB Garamond', Georgia, serif;
     --mono: 'DM Mono', monospace;
     --sans: 'Inter', system-ui, sans-serif;
@@ -30,7 +27,19 @@
   html { scroll-behavior: smooth; }
 
   body {
-    background: var(--paper);
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(
+      to bottom,
+      #9dc3cc 0%,
+      #bbced2 20%,
+      #dbddd7 40%,
+      #ebe4da 60%,
+      #edd7c8 80%,
+      #f6cbbd 100%
+    ) !important;
+    background-attachment: scroll !important;
+    background-size: 100% 100% !important;
     color: var(--ink);
     font-family: var(--serif);
     font-size: 18px;
@@ -47,8 +56,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 1.1rem 2.5rem;
-    background: rgba(245,242,235,0.88);
-    backdrop-filter: blur(12px);
+    background: rgba(157,195,204,0.82);
+    backdrop-filter: blur(14px);
     border-bottom: 0.5px solid var(--rule);
   }
   .nav-name {
@@ -85,18 +94,26 @@
     padding: 8rem 2.5rem 4rem;
     position: relative;
     overflow: hidden;
+    background: transparent;
   }
   .hero-map {
     position: absolute;
     inset: 0;
     z-index: 0;
-    opacity: 0.45;
+  }
+  .hero-map::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(157,195,204,0.5) 0%, rgba(219,221,215,0.45) 100%);
+    z-index: 1;
   }
   .hero-map iframe {
     width: 100%;
     height: 100%;
     border: none;
     pointer-events: none;
+    display: block;
   }
   .hero-content {
     position: relative;
@@ -109,7 +126,7 @@
     font-weight: 300;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: #3a6068;
     margin-bottom: 1.2rem;
   }
   .hero-title {
@@ -118,17 +135,17 @@
     font-weight: 400;
     line-height: 1.05;
     letter-spacing: -0.01em;
-    color: var(--ink);
+    color: #1a1a18;
     margin-bottom: 1.5rem;
   }
   .hero-title em {
     font-style: italic;
-    color: var(--accent);
+    color: #3a6068;
   }
   .hero-desc {
     font-family: var(--serif);
     font-size: 1.15rem;
-    color: var(--ink-2);
+    color: #3a3834;
     max-width: 520px;
     line-height: 1.7;
     margin-bottom: 2.5rem;
@@ -142,13 +159,13 @@
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--ink);
+    color: #1a1a18;
     text-decoration: none;
-    border-bottom: 1px solid var(--ink);
+    border-bottom: 1px solid #1a1a18;
     padding-bottom: 2px;
     transition: color 0.2s, border-color 0.2s;
   }
-  .hero-cta:hover { color: var(--accent); border-color: var(--accent); }
+  .hero-cta:hover { color: #3a6068; border-color: #3a6068; }
   .hero-cta svg { transition: transform 0.2s; }
   .hero-cta:hover svg { transform: translate(3px, -3px); }
 
@@ -175,7 +192,7 @@
   }
 
   /* ── LATEST WORK ── */
-  #latest { background: var(--paper); }
+  #latest { background: transparent; }
 
   .work-feature {
     display: grid;
@@ -259,15 +276,32 @@
     padding: 2rem;
     text-decoration: none;
     color: inherit;
-    display: block;
-    transition: background 0.25s;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 200px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
   }
-  .work-card:hover { background: var(--paper-2); }
+  .work-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--card-bg);
+    background-size: cover;
+    background-position: center;
+    opacity: 0.5;
+    transition: opacity 0.3s ease, transform 0.4s ease;
+    z-index: 0;
+  }
+  .work-card:hover::before { opacity: 0.75; transform: scale(1.04); }
+  .work-card > * { position: relative; z-index: 1; }
   .work-card-num {
     font-family: var(--mono);
     font-size: 0.62rem;
     color: var(--ink-3);
-    margin-bottom: 1.2rem;
+    margin-bottom: auto;
     letter-spacing: 0.08em;
   }
   .work-card-title {
@@ -275,6 +309,7 @@
     font-size: 1.05rem;
     font-style: italic;
     margin-bottom: 0.6rem;
+    margin-top: 2rem;
     line-height: 1.3;
   }
   .work-card-cat {
@@ -286,7 +321,7 @@
   }
 
   /* ── PAST PROJECTS ── */
-  #past { background: var(--paper-2); }
+  #past { background: rgba(235,228,218,0.25); }
 
   .past-list {
     border-top: 0.5px solid var(--rule);
@@ -348,7 +383,7 @@
   .past-item:hover .past-arrow { transform: translate(3px, -3px); color: var(--accent); }
 
   /* ── ABOUT ── */
-  #about { background: var(--paper); }
+  #about { background: rgba(246,203,189,0.2); }
 
   .about-grid {
     display: grid;
@@ -436,8 +471,8 @@
 
   /* ── CONTACT ── */
   .contact-strip {
-    background: var(--ink);
-    color: var(--paper);
+    background: #5a3828;
+    color: #f5ede8;
     padding: 5rem 2.5rem;
     display: flex;
     align-items: center;
@@ -450,7 +485,7 @@
     font-size: clamp(2rem, 5vw, 3.5rem);
     font-style: italic;
     font-weight: 400;
-    color: var(--paper);
+    color: #f5ede8;
     max-width: 500px;
     line-height: 1.2;
   }
@@ -463,27 +498,27 @@
   .contact-link {
     font-family: var(--mono);
     font-size: 0.8rem;
-    color: rgba(245,242,235,0.6);
+    color: rgba(235,215,200,0.65);
     text-decoration: none;
     letter-spacing: 0.05em;
     transition: color 0.2s;
   }
-  .contact-link:hover { color: var(--paper); }
+  .contact-link:hover { color: #f5ede8; }
   .contact-email {
     font-family: var(--serif);
     font-size: 1.1rem;
-    color: var(--paper);
+    color: #f5ede8;
     text-decoration: none;
-    border-bottom: 0.5px solid rgba(245,242,235,0.3);
+    border-bottom: 0.5px solid rgba(235,215,200,0.4);
     padding-bottom: 2px;
     transition: border-color 0.2s;
   }
-  .contact-email:hover { border-color: var(--paper); }
+  .contact-email:hover { border-color: #f5ede8; }
 
   /* ── FOOTER ── */
   footer {
-    background: var(--ink);
-    color: var(--ink-3);
+    background: #3d2518;
+    color: rgba(220,190,170,0.5);
     padding: 1.5rem 2.5rem;
     font-family: var(--mono);
     font-size: 0.66rem;
@@ -555,54 +590,48 @@
 
   <!-- Featured: map project -->
   <div class="work-feature">
-    <div class="work-feature-visual">
-      <iframe
-        src="https://api.mapbox.com/styles/v1/emmahu20060131/cmodwrtal000t01sl8df9h15b.html?title=false&access_token=pk.eyJ1IjoiZW1tYWh1MjAwNjAxMzEiLCJhIjoiY21vNm8xMG5sMjN3djJxcWF5eXJqdTljdyJ9.3bLzesxIGFlguMHlKcPrRg&zoomwheel=true#3/20/110"
-        title="Spatial Data Narrative Map"
-        loading="lazy"
-      ></iframe>
+    <div class="work-feature-visual" style="background-image:url('0.png');background-size:cover;background-position:center;">
     </div>
     <div class="work-feature-info">
       <div>
-        <p class="work-tag">Spatial Data · Featured</p>
-        <h2 class="work-title">Spatial Data Narratives &amp; Cartographic Analysis</h2>
-        <p class="work-desc">Web GIS front-end design visualizing ecological and biodiversity data across the Asia-Pacific region. Interactive mapping that transforms raw field survey data into accessible public narratives.</p>
+        <p class="work-tag">Featured Work</p>
+        <h2 class="work-title">Latest Work</h2>
+        <p class="work-desc">A selection of recent projects spanning scientific illustration, interactive visual narratives, spatial data mapping, and field-based ecological research.</p>
       </div>
-      <a href="https://eaglehu.cargo.site/full-portfolio" class="work-link" target="_blank" rel="noopener">View Project →</a>
+      <a href="https://eaglehu.cargo.site/full-portfolio" class="work-link" target="_blank" rel="noopener">Full Portfolio →</a>
     </div>
   </div>
 
-  <!-- Grid of other recent works -->
   <div class="work-grid">
-    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" target="_blank" rel="noopener">
+    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" style="--card-bg: url('1.png')" target="_blank" rel="noopener">
       <div class="work-card-num">01</div>
-      <div class="work-card-title">Perched Upon Inspiration</div>
-      <div class="work-card-cat">Curated Exhibition</div>
+      <div class="work-card-title">Scientific Illustration</div>
+      <div class="work-card-cat">Scientific Illustration</div>
     </a>
-    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" target="_blank" rel="noopener">
+    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" style="--card-bg: url('2.png')" target="_blank" rel="noopener">
       <div class="work-card-num">02</div>
-      <div class="work-card-title">The Mythical Bird</div>
+      <div class="work-card-title">Marine Biology Scientific Illustration</div>
       <div class="work-card-cat">Scientific Illustration</div>
     </a>
-    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" target="_blank" rel="noopener">
+    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" style="--card-bg: url('3.png')" target="_blank" rel="noopener">
       <div class="work-card-num">03</div>
-      <div class="work-card-title">Marine Biology Illustrations</div>
-      <div class="work-card-cat">Scientific Illustration</div>
-    </a>
-    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" target="_blank" rel="noopener">
-      <div class="work-card-num">04</div>
       <div class="work-card-title">Hey Little Bird, How did you learn to fly?</div>
-      <div class="work-card-cat">Illustration Storybook</div>
+      <div class="work-card-cat">Curated Exhibitions</div>
     </a>
-    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" target="_blank" rel="noopener">
+    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" style="--card-bg: url('4.png')" target="_blank" rel="noopener">
+      <div class="work-card-num">04</div>
+      <div class="work-card-title">The Mythical Bird</div>
+      <div class="work-card-cat">Interactive Visual Novel</div>
+    </a>
+    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" style="--card-bg: url('5.png')" target="_blank" rel="noopener">
       <div class="work-card-num">05</div>
-      <div class="work-card-title">Site Observations</div>
-      <div class="work-card-cat">Field Documentation</div>
+      <div class="work-card-title">Spatial Data Narratives</div>
+      <div class="work-card-cat">Cartographic Analysis</div>
     </a>
-    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" target="_blank" rel="noopener">
+    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" style="--card-bg: url('6.png')" target="_blank" rel="noopener">
       <div class="work-card-num">06</div>
-      <div class="work-card-title">Taxidermy Studies</div>
-      <div class="work-card-cat">Scientific Study</div>
+      <div class="work-card-title">Illustration Storybook</div>
+      <div class="work-card-cat">Illustration</div>
     </a>
   </div>
 </section>
@@ -708,39 +737,15 @@
     </div>
 
     <div class="about-sidebar">
+      <div style="width:100%;aspect-ratio:4/3;overflow:hidden;margin-bottom:1rem;">
+        <img src="about picture.png" alt="Intertidal biodiversity survey at Queenscliff" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+      </div>
       <p class="about-caption">
         📷 Intertidal biodiversity survey using quadrats<br>
         @ Queenscliff, AU | 2026
       </p>
 
-      <div class="about-skills-title">Disciplines</div>
-
-      <div class="skill-row">
-        <span class="skill-name">Scientific Illustration</span>
-        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:90%"></div></div>
-      </div>
-      <div class="skill-row">
-        <span class="skill-name">Web GIS / Mapping</span>
-        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:82%"></div></div>
-      </div>
-      <div class="skill-row">
-        <span class="skill-name">Fieldwork & Ecology</span>
-        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:88%"></div></div>
-      </div>
-      <div class="skill-row">
-        <span class="skill-name">Exhibition Design</span>
-        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:75%"></div></div>
-      </div>
-      <div class="skill-row">
-        <span class="skill-name">Data Narratives</span>
-        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:80%"></div></div>
-      </div>
-      <div class="skill-row">
-        <span class="skill-name">Science Communication</span>
-        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:92%"></div></div>
-      </div>
-
-      <div class="about-skills-title" style="margin-top:2rem">Currently Based</div>
+      <div class="about-skills-title">Currently Based</div>
       <p style="font-family:var(--mono);font-size:0.75rem;color:var(--ink-2);line-height:1.8;">
         London ·  Melbourne · Beijing
       </p>
