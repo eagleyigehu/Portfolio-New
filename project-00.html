@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>The Mythical Bird — Emma Hu</title>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Serif+SC:wght@400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   html,body { width:100%; height:100%; overflow:hidden; background:#0e0e0c; cursor:none; }
@@ -34,10 +36,10 @@
   #portraits {
     position:fixed; bottom:0; left:0; right:0;
     display:flex; justify-content:space-between; align-items:flex-end;
-    z-index:10; pointer-events:none; padding:0 3vw;
+    z-index:10; pointer-events:none; padding:0 2vw;
   }
   .portrait {
-    width:clamp(130px,16vw,240px);
+    width:clamp(200px,28vw,420px);
     opacity:0; transform:translateY(24px);
     transition:opacity 0.5s, transform 0.5s, filter 0.4s;
     filter:brightness(0.45) saturate(0);
@@ -199,6 +201,37 @@
   }
   #fade.in { opacity:1; pointer-events:auto; }
 
+  /* MAPBOX SCENE */
+  #map-layer {
+    position:fixed; inset:0; z-index:2;
+    opacity:0; pointer-events:none; transition:opacity 1s ease;
+  }
+  #map-layer.active { opacity:1; pointer-events:auto; }
+  #mapbox-el { width:100%; height:100%; }
+
+  /* pulsing dot markers on map */
+  .map-marker {
+    width:12px; height:12px; border-radius:50%;
+    background:#c8a0a0; border:2px solid rgba(255,255,255,0.6);
+    cursor:pointer; animation:pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100%{ box-shadow:0 0 0 0 rgba(200,160,160,0.6); }
+    50%     { box-shadow:0 0 0 8px rgba(200,160,160,0); }
+  }
+  /* map overlay instruction */
+  #map-hint {
+    position:fixed; top:3.5rem; left:50%; transform:translateX(-50%);
+    font-family:'DM Mono',monospace; font-size:0.6rem;
+    letter-spacing:0.14em; text-transform:uppercase;
+    color:rgba(255,255,255,0.45);
+    background:rgba(10,10,8,0.7); padding:0.5rem 1.2rem;
+    border:0.5px solid rgba(255,255,255,0.12);
+    backdrop-filter:blur(8px); z-index:200;
+    opacity:0; transition:opacity 0.5s; pointer-events:none;
+  }
+  #map-hint.show { opacity:1; }
+
   /* END */
   #end-screen {
     position:fixed; inset:0; z-index:300;
@@ -232,11 +265,18 @@
     transition:all 0.2s;
   }
   .end-btn:hover { color:rgba(245,240,232,0.9); border-color:rgba(168,200,176,0.48); }
-</style>
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
 </head>
 <body>
 
 <div class="cursor" id="cursor"></div>
+
+<!-- MAPBOX LAYER -->
+<div id="map-layer">
+  <div id="mapbox-el"></div>
+</div>
+<div id="map-hint">Explore the map · 探索地图 — click to continue · 点击继续</div>
 
 <div id="title-screen">
   <p class="title-eyebrow">Interactive Visual Novel · Demo</p>
@@ -250,13 +290,13 @@
 <div id="scene"><div class="scene-tint" id="tint"></div></div>
 
 <div id="portraits">
-  <!-- ▼ 左侧：林蔚 — 替换为你的人物图片文件名 -->
-  <div class="portrait" id="portrait-lin">
-    <img src="登山_透明底_拷贝.png" alt="Dr. Lin Wei"/>
-  </div>
-  <!-- ▼ 右侧：玛拉 — 替换为你的人物图片文件名 -->
+  <!-- 左侧：Mara -->
   <div class="portrait" id="portrait-mara">
-    <img src="观鸟人_拷贝.png" alt="Mara"/>
+    <img src="登山_透明底_拷贝.png" alt="Mara"/>
+  </div>
+  <!-- 右侧：Dr. Lin Wei -->
+  <div class="portrait" id="portrait-lin">
+    <img src="观鸟人_拷贝.png" alt="Dr. Lin Wei"/>
   </div>
 </div>
 
@@ -360,6 +400,8 @@ const story = [
   {
     bg:'mythical-bird-scene-05.png',
     chapter:'Ch.3  The Pattern · 规律',
+    useMap: true,   // ← triggers the Mapbox layer
+    mapFly: { center:[122.1, 29.9], zoom:7.5 },
     lines:[
       { who:'lin',
         en:'These coordinates are not random. When plotted, the data points precisely circumvent every officially patrolled marine sanctuary along the East Asian-Australasian Flyway.',
@@ -444,6 +486,98 @@ const navBack= document.getElementById('nav-back');
 const progEl = document.getElementById('progress');
 const pLin   = document.getElementById('portrait-lin');
 const pMara  = document.getElementById('portrait-mara');
+const mapLayer = document.getElementById('map-layer');
+const mapHint  = document.getElementById('map-hint');
+
+// ── MAPBOX ENGINE ──
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiZW1tYWh1MjAwNjAxMzEiLCJhIjoiY21vNm8xMG5sMjN3djJxcWF5eXJqdTljdyJ9.3bLzesxIGFlguMHlKcPrRg';
+let map = null;
+let mapReady = false;
+
+// Breeding sites & sighting points along the flyway
+const SITES = [
+  { lngLat:[122.38,30.12], label:'Island No.5 · 五号岛', sub:'Last confirmed breeding 2021', color:'#c8a0a0' },
+  { lngLat:[121.90,29.88], label:'Jiushan Islands · 九山列岛', sub:'Historical breeding site', color:'#c8a0a0' },
+  { lngLat:[120.50,27.30], label:'Matsu Islands · 马祖列岛', sub:'Occasional sighting 2019', color:'#9ab0c8' },
+  { lngLat:[119.95,26.10], label:'Min River Estuary · 闽江口', sub:'Stopover — 2022 record', color:'#9ab0c8' },
+  { lngLat:[118.40,24.45], label:'Kinmen · 金门', sub:'Migration corridor', color:'#a8c8b0' },
+  { lngLat:[121.55,25.05], label:'North Taiwan Coast · 台湾北部', sub:'ID-2046 last position ← ANOMALY', color:'#c8a0a0' },
+];
+
+// trafficking route points (vessel path)
+const VESSEL_PATH = [
+  [122.38,30.12],[121.80,28.50],[120.90,26.80],
+  [120.40,24.20],[119.80,22.00],[118.50,20.10],
+  [117.20,17.80],[116.00,14.50],[119.00,10.20],
+  [122.00,7.50], [125.50,5.00], [128.00,2.00],
+];
+
+function initMap(){
+  if(map) return;
+  mapboxgl.accessToken = MAPBOX_TOKEN;
+  map = new mapboxgl.Map({
+    container:'mapbox-el',
+    style:'mapbox://styles/emmahu20060131/cmodwrtal000t01sl8df9h15b',
+    center:[121,25], zoom:5,
+    interactive:true,
+  });
+  map.on('load',()=>{
+    mapReady = true;
+
+    // add vessel route line
+    map.addSource('vessel',{type:'geojson',data:{
+      type:'Feature',geometry:{type:'LineString',coordinates:VESSEL_PATH}
+    }});
+    map.addLayer({id:'vessel-line',type:'line',source:'vessel',paint:{
+      'line-color':'#c8a0a0','line-width':1.5,'line-dasharray':[3,3],'line-opacity':0.7
+    }});
+
+    // add animated dot travelling the route
+    map.addSource('vessel-dot',{type:'geojson',data:{
+      type:'Feature',geometry:{type:'Point',coordinates:VESSEL_PATH[0]}
+    }});
+    map.addLayer({id:'vessel-dot',type:'circle',source:'vessel-dot',paint:{
+      'circle-radius':6,'circle-color':'#c8a0a0','circle-opacity':0.9,
+      'circle-stroke-width':2,'circle-stroke-color':'#fff'
+    }});
+
+    // animate vessel dot along path
+    let step=0;
+    setInterval(()=>{
+      step=(step+1)%VESSEL_PATH.length;
+      if(map.getSource('vessel-dot')){
+        map.getSource('vessel-dot').setData({
+          type:'Feature',geometry:{type:'Point',coordinates:VESSEL_PATH[step]}
+        });
+      }
+    },600);
+
+    // add site markers
+    SITES.forEach(s=>{
+      const el=document.createElement('div');
+      el.className='map-marker';
+      el.style.background=s.color;
+      const popup=new mapboxgl.Popup({offset:12,closeButton:false,maxWidth:'200px'})
+        .setHTML(`<div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:#1a1a18;line-height:1.6;">
+          <strong>${s.label}</strong><br><span style="opacity:0.6">${s.sub}</span></div>`);
+      new mapboxgl.Marker(el).setLngLat(s.lngLat).setPopup(popup).addTo(map);
+    });
+  });
+}
+
+function showMap(flyTo){
+  mapLayer.classList.add('active');
+  mapHint.classList.add('show');
+  if(!map) initMap();
+  if(map && flyTo){
+    map.once('idle',()=>{ map.flyTo({center:flyTo.center,zoom:flyTo.zoom,duration:2000,essential:true}); });
+  }
+}
+
+function hideMap(){
+  mapLayer.classList.remove('active');
+  mapHint.classList.remove('show');
+}
 
 document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';});
 document.addEventListener('mousedown',()=>cur.classList.add('clicking'));
@@ -477,6 +611,11 @@ function loadScene(idx,instant=false){
   const s=story[idx];
   buildDots();
   chapEl.textContent=s.chapter||'';
+
+  // map layer
+  if(s.useMap){ showMap(s.mapFly); }
+  else { hideMap(); }
+
   sceneEl.querySelectorAll('.scene-bg').forEach(el=>{el.classList.remove('active');setTimeout(()=>el.remove(),1400);});
   const bg=document.createElement('div');
   bg.className='scene-bg';
