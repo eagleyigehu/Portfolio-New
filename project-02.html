@@ -3,18 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- ============================================================
-  修改这里：把项目标题填进去
-  ============================================================ -->
-<title>Scientific Illustration — Emma Hu</title>
-
+<title>Marine Biology Scientific Illustration — Emma Hu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
 <style>
-  /* ── 颜色变量（和主页保持一致，不需要改） ── */
   :root {
     --ink: #1a1a18;
     --ink-2: #4a4840;
@@ -27,17 +20,8 @@
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-
   body {
-    background: linear-gradient(
-      to bottom,
-      #9dc3cc 0%,
-      #bbced2 20%,
-      #dbddd7 40%,
-      #ebe4da 60%,
-      #edd7c8 80%,
-      #f6cbbd 100%
-    );
+    background: linear-gradient(to bottom, #9dc3cc 0%, #bbced2 20%, #dbddd7 40%, #ebe4da 60%, #edd7c8 80%, #f6cbbd 100%);
     background-attachment: scroll;
     background-size: 100% 500vh;
     background-repeat: no-repeat;
@@ -48,8 +32,6 @@
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
-
-  /* ── 导航 ── */
   nav {
     display: flex;
     align-items: center;
@@ -69,9 +51,6 @@
     text-transform: uppercase;
     color: var(--ink-2);
     text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
     transition: color 0.2s;
   }
   .nav-back:hover { color: var(--accent); }
@@ -80,15 +59,13 @@
     font-size: 1rem;
     color: var(--ink);
   }
-
-  /* ── 页面内容容器 ── */
   .project-wrap {
     max-width: 900px;
     margin: 0 auto;
     padding: 5rem 2.5rem 8rem;
   }
 
-  /* ── 标题区 ── */
+  /* ── Header ── */
   .project-eyebrow {
     font-family: var(--mono);
     font-size: 0.7rem;
@@ -113,9 +90,8 @@
     border-top: 0.5px solid var(--rule);
     border-bottom: 0.5px solid var(--rule);
     padding: 1.2rem 0;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
   }
-  .meta-item {}
   .meta-label {
     font-family: var(--mono);
     font-size: 0.62rem;
@@ -131,42 +107,78 @@
     color: var(--ink-2);
   }
 
-  /* ── 主图 ── */
+  /* ── Hero image ── */
   .project-hero-img {
     width: 100%;
     height: auto;
     display: block;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
   }
 
-  /* ── 正文段落 ── */
-  .project-body {
-    font-family: var(--serif);
-    font-size: 1.1rem;
-    color: var(--ink-2);
-    line-height: 1.85;
-    margin-bottom: 1.8rem;
-    max-width: 680px;
+  /* ── Timeline ── */
+  .timeline {
+    position: relative;
+    padding-left: 2.5rem;
   }
-  .project-body strong { color: var(--ink); font-weight: 500; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 0;
+    width: 0.5px;
+    background: var(--rule);
+  }
 
-  /* ── 小标题 ── */
-  .project-heading {
+  .timeline-entry {
+    position: relative;
+    margin-bottom: 5rem;
+  }
+  .timeline-entry::before {
+    content: '';
+    position: absolute;
+    left: -2.5rem;
+    top: 8px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 1.5px solid var(--accent);
+  }
+
+  .timeline-date {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  .timeline-heading {
     font-family: var(--serif);
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     font-style: italic;
     color: var(--ink);
-    margin: 3rem 0 1rem;
-    border-left: 2px solid var(--accent);
-    padding-left: 1rem;
+    margin-bottom: 0.8rem;
+    line-height: 1.2;
   }
+  .timeline-body {
+    font-family: var(--serif);
+    font-size: 1rem;
+    color: var(--ink-2);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    max-width: 620px;
+  }
+  .timeline-body strong { color: var(--ink); font-weight: 500; }
 
-  /* ── 图片网格（多图展示用） ── */
+  /* ── Image grid inside timeline ── */
   .image-grid {
     display: grid;
-    gap: 1rem;
-    margin: 2rem 0;
+    gap: 0.8rem;
+    margin: 1.5rem 0 0;
   }
+  .image-grid.cols-1 { grid-template-columns: 1fr; }
   .image-grid.cols-2 { grid-template-columns: 1fr 1fr; }
   .image-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
   .image-grid img {
@@ -176,40 +188,35 @@
   }
   .img-caption {
     font-family: var(--mono);
-    font-size: 0.65rem;
+    font-size: 0.63rem;
     color: var(--ink-3);
     letter-spacing: 0.08em;
-    margin-top: 0.5rem;
+    margin-top: 0.4rem;
+    line-height: 1.5;
   }
 
-  /* ── 引用块 ── */
-  blockquote {
-    border-left: 2px solid var(--rule);
-    padding: 0.5rem 0 0.5rem 1.5rem;
-    margin: 2rem 0;
-    font-style: italic;
-    color: var(--ink-3);
-    font-size: 1rem;
+  /* ── Notes pages (full-width scans) ── */
+  .notes-spread {
+    display: grid;
+    gap: 0.8rem;
+    margin: 1.5rem 0 0;
   }
-
-  /* ── 标签 ── */
-  .tag-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin: 2rem 0;
-  }
-  .tag {
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.3rem 0.65rem;
+  .notes-spread.cols-2 { grid-template-columns: 1fr 1fr; }
+  .notes-spread img {
+    width: 100%;
+    height: auto;
+    display: block;
     border: 0.5px solid var(--rule);
-    color: var(--ink-2);
   }
 
-  /* ── 返回 / 下一个项目导航 ── */
+  /* ── Divider ── */
+  .divider {
+    border: none;
+    border-top: 0.5px solid var(--rule);
+    margin: 5rem 0;
+  }
+
+  /* ── Bottom nav ── */
   .project-nav {
     display: flex;
     justify-content: space-between;
@@ -231,129 +238,236 @@
 
   @media (max-width: 640px) {
     .project-wrap { padding: 3rem 1.2rem 5rem; }
-    .image-grid.cols-2, .image-grid.cols-3 { grid-template-columns: 1fr; }
-    .project-meta { gap: 0.8rem 1.5rem; }
+    .timeline { padding-left: 1.5rem; }
+    .timeline-entry::before { left: -1.5rem; }
+    .image-grid.cols-2,
+    .image-grid.cols-3,
+    .notes-spread.cols-2 { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
-<!-- 导航 -->
 <nav>
   <a href="index.html" class="nav-back">← Back</a>
-  <!-- ▼ 改成项目标题 -->
-  <span class="nav-title">Scientific Illustration</span>
+  <span class="nav-title">Marine Biology Scientific Illustration</span>
 </nav>
 
 <div class="project-wrap">
 
-  <!-- ══════════════════════════════════════════
-    ▼ 修改区域 START
-    每个项目复制这个文件，改下面的内容即可
-  ══════════════════════════════════════════ -->
+  <p class="project-eyebrow">Marine Biology · Scientific Illustration · 2026</p>
+  <h1 class="project-title">Marine Biology<br>Scientific Illustration</h1>
 
-  <!-- 类别标签（mono小字） -->
-  <p class="project-eyebrow">Scientific Illustration · 2024</p>
-
-  <!-- 主标题 -->
-  <h1 class="project-title">Scientific Illustration</h1>
-
-  <!-- 项目信息栏：改 meta-value 里的文字 -->
   <div class="project-meta">
     <div class="meta-item">
       <span class="meta-label">Year</span>
-      <span class="meta-value">2024</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-label">Medium</span>
-      <span class="meta-value">Watercolour, Digital</span>
+      <span class="meta-value">2026</span>
     </div>
     <div class="meta-item">
       <span class="meta-label">Context</span>
-      <span class="meta-value">UAL Illustration</span>
+      <span class="meta-value">RMIT Biology — BIOL2255</span>
     </div>
     <div class="meta-item">
-      <span class="meta-label">Role</span>
-      <span class="meta-value">Illustrator & Researcher</span>
+      <span class="meta-label">Location</span>
+      <span class="meta-value">Queenscliff Marine Station, Victoria, AU</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Methods</span>
+      <span class="meta-value">Field survey · Lab dissection · Scientific illustration</span>
     </div>
   </div>
 
-  <!-- ▼ 主图：把 src 换成你的图片文件名 -->
-  <img class="project-hero-img" src="1.png" alt="Scientific Illustration hero image"/>
+  <!-- Hero: main illustration -->
+  <!-- ▼ Replace src with your main marine biology illustration image -->
+  <img class="project-hero-img" src="2.png" alt="Marine Biology Scientific Illustration"/>
 
-  <!-- ▼ 正文：直接改文字 -->
-  <p class="project-body">
-    在这里写项目介绍。描述这个项目的背景、目的和你的工作方式。
-    可以分多段写，每段用 &lt;p class="project-body"&gt; 包起来。
-  </p>
-  <p class="project-body">
-    This project explores the intersection of scientific accuracy and visual storytelling. 
-    Each illustration was developed through <strong>extensive field observation</strong> 
-    and cross-referenced with specimen collections.
-  </p>
 
-  <!-- ▼ 小标题 -->
-  <h2 class="project-heading">Process</h2>
+  <!-- ════════════════════════════════
+    TIMELINE
+  ════════════════════════════════ -->
+  <div class="timeline">
 
-  <p class="project-body">
-    描述你的创作过程。比如：从野外观察到草稿，再到最终水彩稿的流程。
-  </p>
 
-  <!-- ▼ 两列图片网格：把 src 换成你的图片 -->
-  <div class="image-grid cols-2">
-    <div>
-      <img src="1.png" alt="Process sketch"/>
-      <p class="img-caption">Initial field sketches</p>
+    <!-- ── ENTRY 1 ── -->
+    <div class="timeline-entry">
+      <p class="timeline-date">Week 2 · Lab Practical</p>
+      <h2 class="timeline-heading">Marine Organisms — Biological Classification</h2>
+      <p class="timeline-body">
+        Identified and classified 20 marine organisms by common name, phylum, and habitat.
+        Species ranged from <strong>Asterias amurensis</strong> (Echinodermata, silt and sand sheltered reef)
+        to zooplankton and intertidal invertebrates observed in the Queenscliff marine environment.
+      </p>
+
+      <!-- ▼ Export PDF pages 1–2 as images, name them: marine-bio-notes-p1.png, marine-bio-notes-p2.png -->
+      <div class="notes-spread cols-2">
+        <div>
+          <img src="marine-bio-notes-p1.png" alt="Classification notes page 1"/>
+          <p class="img-caption">Part 1: Biological Classification — Common Name, Phylum, Habitat</p>
+        </div>
+        <div>
+          <img src="marine-bio-notes-p2.png" alt="Classification notes page 2"/>
+          <p class="img-caption">Part 1 continued — organisms 11–20</p>
+        </div>
+      </div>
     </div>
-    <div>
-      <img src="1.png" alt="Final illustration"/>
-      <p class="img-caption">Final watercolour</p>
+
+
+    <!-- ── ENTRY 2 ── -->
+    <div class="timeline-entry">
+      <p class="timeline-date">Week 2 · Lab Practical</p>
+      <h2 class="timeline-heading">Zooplankton & Specimen Sketches</h2>
+      <p class="timeline-body">
+        Direct observation sketches from lab microscopy: zooplankton movement studies,
+        phytoplankton morphology, fish larva, and polychaete worm anatomy including
+        <strong>notopodium, neuropodium, collar, thorax</strong>, and bipinnate radioles.
+        Also documented polychaete worms ×2, shrimp, and snail specimens.
+      </p>
+
+      <!-- ▼ Export PDF pages 3–4 as images -->
+      <div class="notes-spread cols-2">
+        <div>
+          <img src="marine-bio-notes-p3.png" alt="Polychaete worm anatomy sketch"/>
+          <p class="img-caption">Polychaete worm anatomy — notopodium, collar, bipinnate radioles</p>
+        </div>
+        <div>
+          <img src="marine-bio-notes-p4.png" alt="Specimen sketches"/>
+          <p class="img-caption">Specimen sketches — polychaete worms ×2, shrimp, snail</p>
+        </div>
+      </div>
+
+      <!-- ▼ Zooplankton page is a wide landscape scan, full width -->
+      <div class="image-grid cols-1" style="margin-top:0.8rem;">
+        <div>
+          <img src="marine-bio-notes-zooplankton.png" alt="Zooplankton sketches"/>
+          <p class="img-caption">Zooplankton observation — Cypriding, Fish Larva, Nauplius, Phytoplankton (pink & green)</p>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- ▼ 引用/注解 -->
-  <blockquote>
-    "Scientific illustration bridges the gap between data and understanding —
-    making the invisible visible."
-  </blockquote>
 
-  <!-- ▼ 三列图片（可选，不需要就删掉这段） -->
-  <h2 class="project-heading">Details</h2>
-  <div class="image-grid cols-3">
-    <div>
-      <img src="1.png" alt="Detail 1"/>
-      <p class="img-caption">Plumage detail</p>
+    <!-- ── ENTRY 3 ── -->
+    <div class="timeline-entry">
+      <p class="timeline-date">Saturday 21 Mar 2026 · Queenscliff Excursion D1</p>
+      <h2 class="timeline-heading">Sea Search — Snail Catch Per Unit Effort</h2>
+      <p class="timeline-body">
+        Point-intercept quadrat survey at Queenscliff Marine National Park.
+        Recorded algae and sessile invertebrate cover (9:21–9:09, Med cloud / Low wind / None rain).
+        Measured target species — <strong>Limpet, Top Shell, Warrener, Dog Winkle</strong> —
+        against control species including False Limpet and Cominella lineolata.
+        49-point intercept count documented: limpet, false limpet, mussel, snail, rock.
+      </p>
+
+      <!-- ▼ Export PDF pages 5–7 as images -->
+      <div class="notes-spread cols-2">
+        <div>
+          <img src="marine-bio-notes-d1-p1.png" alt="Snail catch data sheet"/>
+          <p class="img-caption">Table 2.3 — Target vs control species with minimum size thresholds</p>
+        </div>
+        <div>
+          <img src="marine-bio-notes-d1-p2.png" alt="Limpet measurements"/>
+          <p class="img-caption">Target Species 1: Limpet / Control Species 1: False Limpet — size measurements</p>
+        </div>
+      </div>
+      <div class="notes-spread cols-2" style="margin-top:0.8rem;">
+        <div>
+          <img src="marine-bio-notes-d1-p3.png" alt="Dog whelk measurements"/>
+          <p class="img-caption">Target Species 2: Dicathais orbita (Dog whelk) / Control: Cominella lineolata</p>
+        </div>
+        <div>
+          <img src="marine-bio-notes-d1-p4.png" alt="Warrener measurements"/>
+          <p class="img-caption">Target Species 3: Turbo undulatus (Warrener) / Control: Bembicium nanum (Conniwink)</p>
+        </div>
+      </div>
+      <div class="image-grid cols-1" style="margin-top:0.8rem;">
+        <div>
+          <img src="marine-bio-notes-d1-quadrat.png" alt="Point intercept quadrat data"/>
+          <p class="img-caption">2.1 Algae & Sessile Invertebrate Point Intercept Counts — 49-point survey</p>
+        </div>
+      </div>
     </div>
-    <div>
-      <img src="1.png" alt="Detail 2"/>
-      <p class="img-caption">Habitat context</p>
+
+
+    <!-- ── ENTRY 4 ── -->
+    <div class="timeline-entry">
+      <p class="timeline-date">Sunday 22 Mar 2026 · Queenscliff Excursion D2</p>
+      <h2 class="timeline-heading">Seagrass Beds — Seine Sampling</h2>
+      <p class="timeline-body">
+        Seine net sampling across three treatments: <strong>Bare 2, Seagrass 2, Bare 3</strong>.
+        Team members: Emma Yige Hu, Maddie Hupfeld, Sienna Coss, Abigail Mak, Ella Poleary, Paige.
+        Notable species: Reed leatherjacket, Decorated crab, Pipefish, Weed fish, Girdle goby,
+        Sand goby, Dumpling squid, Seahorse, Golden eye leatherjacket, Whiting, Australian salmon.
+        Seagrass treatment showed <strong>more species diversity</strong> than bare patch.
+      </p>
+
+      <!-- ▼ Export PDF page 11 as image -->
+      <div class="image-grid cols-1">
+        <div>
+          <img src="marine-bio-notes-d2-seine.png" alt="Seine sampling datasheet"/>
+          <p class="img-caption">Seagrass Beds Seine Sampling — BIOL2255-2026, Queenscliff. Date: 22 March 2026</p>
+        </div>
+      </div>
     </div>
-    <div>
-      <img src="1.png" alt="Detail 3"/>
-      <p class="img-caption">Anatomical notes</p>
+
+
+    <!-- ── ENTRY 5 ── -->
+    <div class="timeline-entry">
+      <p class="timeline-date">Week 9 · Lab Practical</p>
+      <h2 class="timeline-heading">Fish Parasitology — Mackerel Dissection</h2>
+      <p class="timeline-body">
+        Dissection of a female Mackerel (total length 34cm, standard length 29cm, fork length 30cm).
+        Findings: gills — <strong>atypical trematodes</strong> (gymnozoids) ×20 visually spotted,
+        long/stretched form; intestines — Nematode ×1, Acanthocephalan ×1;
+        stomach wash — larval tapeworm ×1 (burrowed in tissues), Trematodes ×2.
+        External surfaces and fins: no parasites. Stomach contents: zooplankton, few copepods.
+      </p>
+
+      <!-- ▼ Export PDF pages 15–16 as images -->
+      <div class="notes-spread cols-2">
+        <div>
+          <img src="marine-bio-notes-parasites-p1.png" alt="Fish parasitology notes"/>
+          <p class="img-caption">Week 9 Fish Parasites — collection info, procedures</p>
+        </div>
+        <div>
+          <img src="marine-bio-notes-parasites-p2.png" alt="Fish dissection findings"/>
+          <p class="img-caption">Findings — trematodes, nematode, acanthocephalan, larval tapeworm</p>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- ▼ 标签：改成你的关键词 -->
-  <div class="tag-list">
-    <span class="tag">Scientific Illustration</span>
-    <span class="tag">Watercolour</span>
-    <span class="tag">Avian Ecology</span>
-    <span class="tag">UAL</span>
-  </div>
 
-  <!-- ══════════════════════════════════════════
-    ▼ 修改区域 END
-  ══════════════════════════════════════════ -->
+    <!-- ── ENTRY 6: Zooplankton data ── -->
+    <div class="timeline-entry">
+      <p class="timeline-date">Week · Lab Practical</p>
+      <h2 class="timeline-heading">Zooplankton Data Sheet</h2>
+      <p class="timeline-body">
+        Tally counts across two samples: Protozoans, Cnidaria, Arthropoda, Mollusca, Echinodermata,
+        Chordata. Notable: barnacle larva, mysid shrimp, tanaid shrimp, ostracod, fish larva,
+        calanoid copepod. Other: <strong>pennate diatoms</strong>.
+      </p>
 
-  <!-- 底部导航：改链接和文字 -->
+      <!-- ▼ Export PDF pages 13–14 as images -->
+      <div class="notes-spread cols-2">
+        <div>
+          <img src="marine-bio-notes-zoo-p1.png" alt="Zooplankton data sheet page 1"/>
+          <p class="img-caption">Zooplankton Data Sheet — Sample 1 & 2 tally counts</p>
+        </div>
+        <div>
+          <img src="marine-bio-notes-zoo-p2.png" alt="Zooplankton data sheet page 2"/>
+          <p class="img-caption">Continued — Mollusca, Bryozoa, Echinodermata, Chordata</p>
+        </div>
+      </div>
+    </div>
+
+
+  </div><!-- end timeline -->
+
+
+  <!-- Bottom nav -->
   <div class="project-nav">
-    <a href="index.html">← All Projects</a>
-    <!-- ▼ 改成下一个项目的文件名和标题 -->
-    <a href="project-02.html">Marine Biology Illustration →</a>
+    <a href="project-01.html">← Scientific Illustration</a>
+    <a href="project-03.html">Hey Little Bird →</a>
   </div>
 
 </div>
-
 </body>
 </html>
