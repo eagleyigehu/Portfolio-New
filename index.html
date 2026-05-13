@@ -13,11 +13,11 @@
 <style>
   :root {
     --ink: #1a1a18;
-    --ink-2: #4a4844;
-    --ink-3: #8a8680;
-    --accent: #4a7078;
-    --accent-warm: #c07858;
-    --rule: rgba(26,24,20,0.11);
+    --ink-2: #4a4840;
+    --ink-3: #8a8880;
+    --accent: #5a7a6a;
+    --accent-warm: #b06848;
+    --rule: rgba(26,24,20,0.12);
     --serif: 'EB Garamond', Georgia, serif;
     --mono: 'DM Mono', monospace;
     --sans: 'Inter', system-ui, sans-serif;
@@ -37,9 +37,11 @@
       #ebe4da 60%,
       #edd7c8 80%,
       #f6cbbd 100%
-    ) !important;
-    background-attachment: scroll !important;
-    background-size: 100% 100% !important;
+    );
+    background-attachment: scroll;
+    background-size: 100% 500vh;
+    background-repeat: no-repeat;
+    background-color: #f6cbbd;
     color: var(--ink);
     font-family: var(--serif);
     font-size: 18px;
@@ -56,7 +58,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 1.1rem 2.5rem;
-    background: rgba(157,195,204,0.82);
+    background: rgba(157,195,204,0.78);
     backdrop-filter: blur(14px);
     border-bottom: 0.5px solid var(--rule);
   }
@@ -279,7 +281,7 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    min-height: 200px;
+    min-height: 260px;
     position: relative;
     overflow: hidden;
     transition: transform 0.3s ease;
@@ -291,16 +293,25 @@
     background-image: var(--card-bg);
     background-size: cover;
     background-position: center;
-    opacity: 0.5;
+    opacity: 0.85;
     transition: opacity 0.3s ease, transform 0.4s ease;
     z-index: 0;
   }
-  .work-card:hover::before { opacity: 0.75; transform: scale(1.04); }
-  .work-card > * { position: relative; z-index: 1; }
+  .work-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(20,18,14,0.72) 0%, rgba(20,18,14,0.15) 55%, transparent 100%);
+    z-index: 1;
+    transition: opacity 0.3s ease;
+  }
+  .work-card:hover::before { opacity: 1; transform: scale(1.04); }
+  .work-card:hover::after { background: linear-gradient(to top, rgba(20,18,14,0.6) 0%, rgba(20,18,14,0.1) 55%, transparent 100%); }
+  .work-card > * { position: relative; z-index: 2; }
   .work-card-num {
     font-family: var(--mono);
     font-size: 0.62rem;
-    color: var(--ink-3);
+    color: rgba(255,255,255,0.7);
     margin-bottom: auto;
     letter-spacing: 0.08em;
   }
@@ -308,20 +319,22 @@
     font-family: var(--serif);
     font-size: 1.05rem;
     font-style: italic;
-    margin-bottom: 0.6rem;
+    color: #fff;
+    margin-bottom: 0.4rem;
     margin-top: 2rem;
     line-height: 1.3;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
   }
   .work-card-cat {
     font-family: var(--mono);
-    font-size: 0.62rem;
+    font-size: 0.6rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--ink-3);
+    color: rgba(255,255,255,0.65);
   }
 
   /* ── PAST PROJECTS ── */
-  #past { background: rgba(235,228,218,0.25); }
+  #past { background: transparent; }
 
   .past-list {
     border-top: 0.5px solid var(--rule);
@@ -383,7 +396,7 @@
   .past-item:hover .past-arrow { transform: translate(3px, -3px); color: var(--accent); }
 
   /* ── ABOUT ── */
-  #about { background: rgba(246,203,189,0.2); }
+  #about { background: transparent; }
 
   .about-grid {
     display: grid;
@@ -603,32 +616,32 @@
   </div>
 
   <div class="work-grid">
-    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" style="--card-bg: url('1.png')" target="_blank" rel="noopener">
+    <a href="project-01.html" class="work-card" style="--card-bg: url('1.png')" target="_blank" rel="noopener">
       <div class="work-card-num">01</div>
       <div class="work-card-title">Scientific Illustration</div>
       <div class="work-card-cat">Scientific Illustration</div>
     </a>
-    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" style="--card-bg: url('2.png')" target="_blank" rel="noopener">
+    <a href="project-02.html" class="work-card" style="--card-bg: url('2.png')" target="_blank" rel="noopener">
       <div class="work-card-num">02</div>
       <div class="work-card-title">Marine Biology Scientific Illustration</div>
       <div class="work-card-cat">Scientific Illustration</div>
     </a>
-    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" style="--card-bg: url('3.png')" target="_blank" rel="noopener">
+    <a href="project-03.html" class="work-card" style="--card-bg: url('3.png')" target="_blank" rel="noopener">
       <div class="work-card-num">03</div>
       <div class="work-card-title">Hey Little Bird, How did you learn to fly?</div>
       <div class="work-card-cat">Curated Exhibitions</div>
     </a>
-    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" style="--card-bg: url('4.png')" target="_blank" rel="noopener">
+    <a href="project-04.html" class="work-card" style="--card-bg: url('4.png')" target="_blank" rel="noopener">
       <div class="work-card-num">04</div>
       <div class="work-card-title">The Mythical Bird</div>
       <div class="work-card-cat">Interactive Visual Novel</div>
     </a>
-    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" style="--card-bg: url('5.png')" target="_blank" rel="noopener">
+    <a href="project-05.html" class="work-card" style="--card-bg: url('5.png')" target="_blank" rel="noopener">
       <div class="work-card-num">05</div>
       <div class="work-card-title">Spatial Data Narratives</div>
       <div class="work-card-cat">Cartographic Analysis</div>
     </a>
-    <a href="https://eaglehu.cargo.site/full-portfolio" class="work-card" style="--card-bg: url('6.png')" target="_blank" rel="noopener">
+    <a href="project-06.html" class="work-card" style="--card-bg: url('6.png')" target="_blank" rel="noopener">
       <div class="work-card-num">06</div>
       <div class="work-card-title">Illustration Storybook</div>
       <div class="work-card-cat">Illustration</div>
@@ -737,8 +750,8 @@
     </div>
 
     <div class="about-sidebar">
-      <div style="width:100%;aspect-ratio:4/3;overflow:hidden;margin-bottom:1rem;">
-        <img src="about picture.png" alt="Intertidal biodiversity survey at Queenscliff" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+      <div style="width:100%;overflow:hidden;margin-bottom:1rem;">
+        <img src="about picture.png" alt="Intertidal biodiversity survey at Queenscliff" style="width:100%;height:auto;display:block;"/>
       </div>
       <p class="about-caption">
         📷 Intertidal biodiversity survey using quadrats<br>
