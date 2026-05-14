@@ -34,18 +34,20 @@
   #portraits {
     position:fixed; bottom:0; left:0; right:0;
     display:flex; justify-content:space-between; align-items:flex-end;
-    z-index:10; pointer-events:none; padding:0 3vw;
+    z-index:10; pointer-events:none; padding:0;
   }
   .portrait {
-    width:clamp(130px,16vw,240px);
     opacity:0; transform:translateY(24px);
     transition:opacity 0.5s, transform 0.5s, filter 0.4s;
     filter:brightness(0.45) saturate(0);
+    flex-shrink:0;
   }
   .portrait img { width:100%; height:auto; display:block; }
   .portrait.visible { opacity:1; transform:translateY(0); }
   .portrait.speaking { filter:brightness(1) saturate(1); }
   .portrait.silent   { filter:brightness(0.4) saturate(0); }
+  #portrait-lin  { width:clamp(220px,28vw,430px); }
+  #portrait-mara { width:clamp(220px,28vw,430px); }
 
   .nav-back {
     position:fixed; top:1.4rem; left:1.8rem; z-index:200;
@@ -291,8 +293,8 @@
 <script>
 const CHARS = {
   log:  { label:'Field Log · 野外记录',    color:'color-log',  portrait:null   },
-  lin:  { label:'Dr. Lin Wei · 林蔚博士',  color:'color-lin',  portrait:'lin'  },
-  mara: { label:'Mara · 玛拉',             color:'color-mara', portrait:'mara' },
+  lin:  { label:'Mara · 玛拉',             color:'color-lin',  portrait:'lin'  },
+  mara: { label:'Dr. Lin Wei · 林蔚博士',  color:'color-mara', portrait:'mara' },
   sys:  { label:'System Alert · 系统警报', color:'color-sys',  portrait:null   },
 };
 
