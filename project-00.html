@@ -49,10 +49,10 @@
   .portrait.speaking { filter:brightness(1) saturate(1); }
   .portrait.silent   { filter:brightness(0.4) saturate(0); }
 
-  /* 左侧 Mara：登山图，竖版，宽一点 */
-  #portrait-mara { width:clamp(180px,22vw,360px); }
-  /* 右侧 Lin Wei：观鸟人图，横版裁切问题，控制高度 */
-  #portrait-lin  { width:clamp(220px,28vw,420px); }
+  /* 左侧 Lin Wei：登山图，竖版 */
+  #portrait-lin  { width:clamp(180px,22vw,360px); }
+  /* 右侧 Mara：观鸟人图，横版 */
+  #portrait-mara { width:clamp(220px,28vw,420px); }
 
   .nav-back {
     position:fixed; top:1.4rem; left:1.8rem; z-index:200;
@@ -296,13 +296,13 @@
 <div class="map-hint" id="map-hint">探索地图 · Click anywhere to continue</div>
 
 <div id="portraits">
-  <!-- 左侧：Mara（登山_透明底_拷贝.png） -->
-  <div class="portrait" id="portrait-mara">
-    <img src="登山_透明底_拷贝.png" alt="Mara"/>
-  </div>
-  <!-- 右侧：Dr. Lin Wei（观鸟人_拷贝.png） -->
+  <!-- 左侧：Dr. Lin Wei（登山_透明底_拷贝.png） -->
   <div class="portrait" id="portrait-lin">
-    <img src="观鸟人_拷贝.png" alt="Dr. Lin Wei"/>
+    <img src="登山_透明底_拷贝.png" alt="Dr. Lin Wei"/>
+  </div>
+  <!-- 右侧：Mara（观鸟人_拷贝.png） -->
+  <div class="portrait" id="portrait-mara">
+    <img src="观鸟人_拷贝.png" alt="Mara"/>
   </div>
 </div>
 
