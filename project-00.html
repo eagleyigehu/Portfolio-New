@@ -201,37 +201,6 @@
   }
   #fade.in { opacity:1; pointer-events:auto; }
 
-  /* MAPBOX SCENE */
-  #map-layer {
-    position:fixed; inset:0; z-index:2;
-    opacity:0; pointer-events:none; transition:opacity 1s ease;
-  }
-  #map-layer.active { opacity:1; pointer-events:auto; }
-  #mapbox-el { width:100%; height:100%; }
-
-  /* pulsing dot markers on map */
-  .map-marker {
-    width:12px; height:12px; border-radius:50%;
-    background:#c8a0a0; border:2px solid rgba(255,255,255,0.6);
-    cursor:pointer; animation:pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%,100%{ box-shadow:0 0 0 0 rgba(200,160,160,0.6); }
-    50%     { box-shadow:0 0 0 8px rgba(200,160,160,0); }
-  }
-  /* map overlay instruction */
-  #map-hint {
-    position:fixed; top:3.5rem; left:50%; transform:translateX(-50%);
-    font-family:'DM Mono',monospace; font-size:0.6rem;
-    letter-spacing:0.14em; text-transform:uppercase;
-    color:rgba(255,255,255,0.45);
-    background:rgba(10,10,8,0.7); padding:0.5rem 1.2rem;
-    border:0.5px solid rgba(255,255,255,0.12);
-    backdrop-filter:blur(8px); z-index:200;
-    opacity:0; transition:opacity 0.5s; pointer-events:none;
-  }
-  #map-hint.show { opacity:1; }
-
   /* END */
   #end-screen {
     position:fixed; inset:0; z-index:300;
@@ -265,18 +234,44 @@
     transition:all 0.2s;
   }
   .end-btn:hover { color:rgba(245,240,232,0.9); border-color:rgba(168,200,176,0.48); }
-<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  /* MAPBOX LAYER */
+  #map-layer {
+    position:fixed; inset:0; z-index:5;
+    opacity:0; pointer-events:none;
+    transition:opacity 0.8s ease;
+  }
+  #map-layer.visible { opacity:1; pointer-events:auto; }
+  #map-container { width:100%; height:100%; }
+
+  .mapboxgl-popup-content {
+    background:rgba(10,10,8,0.88) !important;
+    border:0.5px solid rgba(255,255,255,0.15) !important;
+    color:rgba(245,240,232,0.9) !important;
+    font-family:'DM Mono',monospace !important;
+    font-size:0.65rem !important;
+    letter-spacing:0.06em !important;
+    padding:0.8rem 1rem !important;
+    backdrop-filter:blur(8px) !important;
+    border-radius:0 !important;
+    max-width:200px !important;
+  }
+  .mapboxgl-popup-tip { display:none !important; }
+  .mapboxgl-ctrl-bottom-left, .mapboxgl-ctrl-bottom-right { display:none !important; }
+
+  .map-hint {
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-family:'DM Mono',monospace; font-size:0.62rem;
+    letter-spacing:0.14em; text-transform:uppercase;
+    color:rgba(255,255,255,0.35);
+    text-align:center; line-height:2; z-index:6;
+    pointer-events:none; opacity:0; transition:opacity 0.5s;
+  }
+  .map-hint.show { opacity:1; }
+</style>
 </head>
 <body>
 
 <div class="cursor" id="cursor"></div>
-
-<!-- MAPBOX LAYER -->
-<div id="map-layer">
-  <div id="mapbox-el"></div>
-</div>
-<div id="map-hint">Explore the map · 探索地图 — click to continue · 点击继续</div>
 
 <div id="title-screen">
   <p class="title-eyebrow">Interactive Visual Novel · Demo</p>
@@ -288,6 +283,12 @@
 
 <div id="fade"></div>
 <div id="scene"><div class="scene-tint" id="tint"></div></div>
+
+<!-- MAPBOX MAP LAYER (shown during scene 4) -->
+<div id="map-layer">
+  <div id="map-container"></div>
+</div>
+<div class="map-hint" id="map-hint">探索地图 · Click anywhere to continue</div>
 
 <div id="portraits">
   <!-- 左侧：Mara -->
@@ -400,8 +401,7 @@ const story = [
   {
     bg:'mythical-bird-scene-05.png',
     chapter:'Ch.3  The Pattern · 规律',
-    useMap: true,   // ← triggers the Mapbox layer
-    mapFly: { center:[122.1, 29.9], zoom:7.5 },
+    mapScene: true,
     lines:[
       { who:'lin',
         en:'These coordinates are not random. When plotted, the data points precisely circumvent every officially patrolled marine sanctuary along the East Asian-Australasian Flyway.',
@@ -468,6 +468,73 @@ const story = [
   },
 ];
 
+// ── MAPBOX ──
+mapboxgl.accessToken = 'pk.eyJ1IjoiZW1tYWh1MjAwNjAxMzEiLCJhIjoiY21vNm8xMG5sMjN3djJxcWF5eXJqdTljdyJ9.3bLzesxIGFlguMHlKcPrRg';
+let map = null;
+const mapLayer = document.getElementById('map-layer');
+const mapHint  = document.getElementById('map-hint');
+
+const MIGRATION_POINTS = [
+  { lng:122.1, lat:29.9, label:'Island No.5 · 五号岛', type:'breeding',  desc:'Last confirmed breeding 2021\n最后确认繁殖地' },
+  { lng:119.8, lat:26.1, label:'Matsu · 马祖',         type:'stopover',  desc:'Historical stopover site\n历史停歇地' },
+  { lng:119.5, lat:25.1, label:'Min River Estuary · 闽江口', type:'stopover', desc:'Wintering foraging area\n越冬觅食区' },
+  { lng:120.0, lat:23.5, label:'Taiwan Strait · 台湾海峡', type:'stopover', desc:'Active migration corridor\n活跃迁徙廊道' },
+  { lng:121.5, lat:25.0, label:'ID-2046 Last Position', type:'anomaly',  desc:'ANOMALY — 28.5°N deviation\n异常：北纬28.5度偏离' },
+  { lng:121.0, lat:22.0, label:'Illegal vessel route · 走私路线', type:'vessel', desc:'Signal source: transport vessel\n信号源：非法运输船' },
+];
+
+function initMap() {
+  if (map) return;
+  map = new mapboxgl.Map({
+    container: 'map-container',
+    style: 'mapbox://styles/emmahu20060131/cmodwrtal000t01sl8df9h15b',
+    center: [121, 27],
+    zoom: 5.5,
+    attributionControl: false,
+  });
+  map.on('load', () => {
+    // migration route line
+    map.addSource('route', { type:'geojson', data:{
+      type:'Feature', geometry:{ type:'LineString',
+        coordinates: MIGRATION_POINTS.map(p=>[p.lng,p.lat])
+      }
+    }});
+    map.addLayer({ id:'route-line', type:'line', source:'route',
+      layout:{'line-join':'round','line-cap':'round'},
+      paint:{'line-color':'#c8a0a0','line-width':1.5,'line-dasharray':[2,3],'line-opacity':0.7}
+    });
+
+    // markers
+    MIGRATION_POINTS.forEach(p => {
+      const el = document.createElement('div');
+      const colors = { breeding:'#a8c8b0', stopover:'#9ab0c8', anomaly:'#c8a0a0', vessel:'#c8b060' };
+      el.style.cssText = `width:10px;height:10px;border-radius:50%;background:${colors[p.type]};
+        border:1.5px solid rgba(255,255,255,0.5);cursor:pointer;
+        box-shadow:0 0 8px ${colors[p.type]};`;
+      if (p.type === 'anomaly') {
+        el.style.animation = 'pulse 1.5s infinite';
+        const style = document.createElement('style');
+        style.textContent = `@keyframes pulse{0%,100%{box-shadow:0 0 4px #c8a0a0}50%{box-shadow:0 0 16px #c8a0a0}}`;
+        document.head.appendChild(style);
+      }
+      new mapboxgl.Marker(el).setLngLat([p.lng, p.lat])
+        .setPopup(new mapboxgl.Popup({ offset:12, closeButton:false })
+          .setHTML(`<div style="line-height:1.7">${p.label}<br><span style="opacity:0.55;font-size:0.58rem">${p.desc.replace('\n','<br>')}</span></div>`))
+        .addTo(map);
+    });
+  });
+}
+
+function showMap() {
+  initMap();
+  mapLayer.classList.add('visible');
+  setTimeout(() => mapHint.classList.add('show'), 1200);
+}
+function hideMap() {
+  mapLayer.classList.remove('visible');
+  mapHint.classList.remove('show');
+}
+
 // ENGINE
 let scene=0, line=0, typing=false, timer=null, started=false;
 const cur    = document.getElementById('cursor');
@@ -486,98 +553,6 @@ const navBack= document.getElementById('nav-back');
 const progEl = document.getElementById('progress');
 const pLin   = document.getElementById('portrait-lin');
 const pMara  = document.getElementById('portrait-mara');
-const mapLayer = document.getElementById('map-layer');
-const mapHint  = document.getElementById('map-hint');
-
-// ── MAPBOX ENGINE ──
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiZW1tYWh1MjAwNjAxMzEiLCJhIjoiY21vNm8xMG5sMjN3djJxcWF5eXJqdTljdyJ9.3bLzesxIGFlguMHlKcPrRg';
-let map = null;
-let mapReady = false;
-
-// Breeding sites & sighting points along the flyway
-const SITES = [
-  { lngLat:[122.38,30.12], label:'Island No.5 · 五号岛', sub:'Last confirmed breeding 2021', color:'#c8a0a0' },
-  { lngLat:[121.90,29.88], label:'Jiushan Islands · 九山列岛', sub:'Historical breeding site', color:'#c8a0a0' },
-  { lngLat:[120.50,27.30], label:'Matsu Islands · 马祖列岛', sub:'Occasional sighting 2019', color:'#9ab0c8' },
-  { lngLat:[119.95,26.10], label:'Min River Estuary · 闽江口', sub:'Stopover — 2022 record', color:'#9ab0c8' },
-  { lngLat:[118.40,24.45], label:'Kinmen · 金门', sub:'Migration corridor', color:'#a8c8b0' },
-  { lngLat:[121.55,25.05], label:'North Taiwan Coast · 台湾北部', sub:'ID-2046 last position ← ANOMALY', color:'#c8a0a0' },
-];
-
-// trafficking route points (vessel path)
-const VESSEL_PATH = [
-  [122.38,30.12],[121.80,28.50],[120.90,26.80],
-  [120.40,24.20],[119.80,22.00],[118.50,20.10],
-  [117.20,17.80],[116.00,14.50],[119.00,10.20],
-  [122.00,7.50], [125.50,5.00], [128.00,2.00],
-];
-
-function initMap(){
-  if(map) return;
-  mapboxgl.accessToken = MAPBOX_TOKEN;
-  map = new mapboxgl.Map({
-    container:'mapbox-el',
-    style:'mapbox://styles/emmahu20060131/cmodwrtal000t01sl8df9h15b',
-    center:[121,25], zoom:5,
-    interactive:true,
-  });
-  map.on('load',()=>{
-    mapReady = true;
-
-    // add vessel route line
-    map.addSource('vessel',{type:'geojson',data:{
-      type:'Feature',geometry:{type:'LineString',coordinates:VESSEL_PATH}
-    }});
-    map.addLayer({id:'vessel-line',type:'line',source:'vessel',paint:{
-      'line-color':'#c8a0a0','line-width':1.5,'line-dasharray':[3,3],'line-opacity':0.7
-    }});
-
-    // add animated dot travelling the route
-    map.addSource('vessel-dot',{type:'geojson',data:{
-      type:'Feature',geometry:{type:'Point',coordinates:VESSEL_PATH[0]}
-    }});
-    map.addLayer({id:'vessel-dot',type:'circle',source:'vessel-dot',paint:{
-      'circle-radius':6,'circle-color':'#c8a0a0','circle-opacity':0.9,
-      'circle-stroke-width':2,'circle-stroke-color':'#fff'
-    }});
-
-    // animate vessel dot along path
-    let step=0;
-    setInterval(()=>{
-      step=(step+1)%VESSEL_PATH.length;
-      if(map.getSource('vessel-dot')){
-        map.getSource('vessel-dot').setData({
-          type:'Feature',geometry:{type:'Point',coordinates:VESSEL_PATH[step]}
-        });
-      }
-    },600);
-
-    // add site markers
-    SITES.forEach(s=>{
-      const el=document.createElement('div');
-      el.className='map-marker';
-      el.style.background=s.color;
-      const popup=new mapboxgl.Popup({offset:12,closeButton:false,maxWidth:'200px'})
-        .setHTML(`<div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:#1a1a18;line-height:1.6;">
-          <strong>${s.label}</strong><br><span style="opacity:0.6">${s.sub}</span></div>`);
-      new mapboxgl.Marker(el).setLngLat(s.lngLat).setPopup(popup).addTo(map);
-    });
-  });
-}
-
-function showMap(flyTo){
-  mapLayer.classList.add('active');
-  mapHint.classList.add('show');
-  if(!map) initMap();
-  if(map && flyTo){
-    map.once('idle',()=>{ map.flyTo({center:flyTo.center,zoom:flyTo.zoom,duration:2000,essential:true}); });
-  }
-}
-
-function hideMap(){
-  mapLayer.classList.remove('active');
-  mapHint.classList.remove('show');
-}
 
 document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';});
 document.addEventListener('mousedown',()=>cur.classList.add('clicking'));
@@ -611,11 +586,6 @@ function loadScene(idx,instant=false){
   const s=story[idx];
   buildDots();
   chapEl.textContent=s.chapter||'';
-
-  // map layer
-  if(s.useMap){ showMap(s.mapFly); }
-  else { hideMap(); }
-
   sceneEl.querySelectorAll('.scene-bg').forEach(el=>{el.classList.remove('active');setTimeout(()=>el.remove(),1400);});
   const bg=document.createElement('div');
   bg.className='scene-bg';
@@ -624,6 +594,7 @@ function loadScene(idx,instant=false){
   setTimeout(()=>bg.classList.add('active'),instant?0:50);
   tint.classList.add('dim');
   hideChoices();
+  if(s.mapScene){ showMap(); } else { hideMap(); }
   showLine();
 }
 
