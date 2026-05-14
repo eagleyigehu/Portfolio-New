@@ -180,37 +180,37 @@
   /* ── TEXT + IMAGE PAIRS ── */
   .pair {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 1fr;
     gap: 0;
     border-top: 0.5px solid var(--rule);
     align-items: start;
   }
-  .pair.reverse { direction: rtl; }
-  .pair.reverse > * { direction: ltr; }
+  .pair.reverse { grid-template-columns: 1fr 2fr; }
   .pair-img { overflow: hidden; background: #f5f3ef; }
   .pair-img img { width: 100%; height: auto; display: block; }
   .pair-text {
-    padding: 4rem 3.5rem;
+    padding: 3rem 2.5rem;
     display: flex; flex-direction: column; justify-content: center;
     background: var(--white);
+    position: sticky; top: 4rem;
   }
   .pair-label {
-    font-family: var(--mono); font-size: 0.58rem;
-    letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--ink-3); margin-bottom: 1.2rem;
+    font-family: var(--mono); font-size: 0.54rem;
+    letter-spacing: 0.13em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 1rem;
   }
   .pair-heading {
     font-family: var(--serif);
-    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    font-size: clamp(1.1rem, 2vw, 1.6rem);
     font-style: italic; font-weight: 300;
     line-height: 1.2; color: var(--ink);
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
   }
   .pair-body {
-    font-size: 1rem; color: var(--ink-2);
-    line-height: 1.85; max-width: 420px;
+    font-size: 0.88rem; color: var(--ink-2);
+    line-height: 1.8; max-width: 320px;
   }
-  .pair-body + .pair-body { margin-top: 1rem; }
+  .pair-body + .pair-body { margin-top: 0.8rem; }
   .pair-body em { font-style: italic; color: var(--ink); }
 
   /* ── QUOTE ── */
@@ -232,17 +232,17 @@
     margin-top: 1.5rem; display: block;
   }
 
-  /* ── THREE-UP GRID ── */
-  .trio {
-    display: grid; grid-template-columns: repeat(3,1fr);
+  /* ── THREE-UP GRID → TWO FULL WIDTH ── */
+  .duo {
+    display: grid; grid-template-columns: 1fr 1fr;
     border-top: 0.5px solid var(--rule);
   }
-  .trio-item { overflow: hidden; position: relative; }
-  .trio-item img { width: 100%; height: auto; display: block; transition: transform 0.5s ease; }
-  .trio-item:hover img { transform: scale(1.04); }
-  .trio-caption {
-    padding: 1rem 1.2rem;
-    font-family: var(--mono); font-size: 0.58rem;
+  .duo-item { overflow: hidden; position: relative; }
+  .duo-item img { width: 100%; height: auto; display: block; transition: transform 0.5s ease; }
+  .duo-item:hover img { transform: scale(1.02); }
+  .duo-caption {
+    padding: 0.8rem 1.4rem;
+    font-family: var(--mono); font-size: 0.55rem;
     letter-spacing: 0.08em; color: var(--ink-3);
     line-height: 1.6; border-bottom: 0.5px solid var(--rule);
   }
@@ -293,12 +293,12 @@
   /* ── CLOSING ── */
   .closing {
     display: flex; flex-direction: column;
-    align-items: center; padding: 5rem 2rem 4rem;
+    align-items: center; padding: 4rem 2rem 3rem;
     border-top: 0.5px solid var(--rule);
     background: var(--white);
   }
   .closing-poster {
-    width: min(520px, 88vw);
+    width: min(700px, 92vw);
     margin: 0 0 2rem;
   }
   .closing-poster img { width: 100%; display: block; }
@@ -339,23 +339,30 @@
     border-top: 0.5px solid var(--rule);
   }
   #flipbook {
-    max-width: 560px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 0 1.5rem;
   }
+  /* spread: two pages side by side */
   #flipbook-pages {
-    position: relative;
-    background: #fff;
-    box-shadow: 0 4px 40px rgba(0,0,0,0.12), 2px 2px 0 #e0ddd8;
-    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    background: #d8d4ce;
+    box-shadow: 0 4px 40px rgba(0,0,0,0.14);
   }
-  #page-img {
-    width: 100%;
-    height: auto;
-    display: block;
+  /* single page (cover) */
+  #flipbook-pages.single {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  #page-img-l, #page-img-r {
+    width: 100%; height: auto; display: block;
     transition: opacity 0.2s ease;
+    background: #fff;
   }
-  #page-img.fade { opacity: 0; }
+  #page-img-l.fade, #page-img-r.fade { opacity: 0; }
 
   #flipbook-ui {
     display: flex;
@@ -372,29 +379,19 @@
   #flipbook-ui button:hover {
     background: var(--ink); color: #fff; border-color: var(--ink);
   }
-  #flipbook-ui button:disabled {
-    opacity: 0.25; cursor: default;
-  }
+  #flipbook-ui button:disabled { opacity: 0.25; cursor: default; }
   #page-info {
     font-family: var(--mono); font-size: 0.62rem;
     letter-spacing: 0.1em; color: var(--ink-3);
   }
-
-  /* thumbnail strip */
   #flipbook-thumb-strip {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-    padding-top: 0.8rem;
-    border-top: 0.5px solid var(--rule);
+    display: flex; gap: 4px; flex-wrap: wrap;
+    padding-top: 0.8rem; border-top: 0.5px solid var(--rule);
   }
   .thumb {
     width: calc((100% - 4px*9) / 10);
-    aspect-ratio: 0.707;
-    object-fit: cover;
-    cursor: pointer;
-    opacity: 0.45;
-    transition: opacity 0.2s;
+    aspect-ratio: 0.707; object-fit: cover;
+    cursor: pointer; opacity: 0.45; transition: opacity 0.2s;
     border: 1.5px solid transparent;
   }
   .thumb:hover { opacity: 0.8; }
@@ -555,8 +552,9 @@
 <!-- FLIPBOOK -->
 <div id="flipbook-wrap" class="reveal">
   <div id="flipbook">
-    <div id="flipbook-pages">
-      <img id="page-img" src="pages-01.jpg" alt="Booklet page 1"/>
+    <div id="flipbook-pages" class="single">
+      <img id="page-img-l" src="pages-01.jpg" alt="Booklet page"/>
+      <img id="page-img-r" src="pages-02.jpg" alt="Booklet page" style="display:none"/>
     </div>
     <div id="flipbook-ui">
       <button id="btn-prev" aria-label="Previous page">←</button>
@@ -567,9 +565,7 @@
       </div>
       <button id="btn-next" aria-label="Next page">→</button>
     </div>
-    <div id="flipbook-thumb-strip">
-      <!-- filled by JS -->
-    </div>
+    <div id="flipbook-thumb-strip"></div>
   </div>
 </div>
 
@@ -579,18 +575,14 @@
   <h2 class="chapter-title">The Exhibition</h2>
 </div>
 
-<div class="trio reveal">
-  <div class="trio-item">
+<div class="duo reveal">
+  <div class="duo-item">
     <img src="heylittlebird5.jpg" alt="Knowledge Translation and Public Engagement"/>
-    <div class="trio-caption">Knowledge Translation & Public Engagement<br>Ocarina User Guide · Audience Interaction</div>
+    <div class="duo-caption">Knowledge Translation & Public Engagement · Ocarina User Guide · Audience Interaction</div>
   </div>
-  <div class="trio-item" style="grid-row: span 1;">
+  <div class="duo-item">
     <img src="heylittlebird7.jpg" alt="Field work team and curation team"/>
-    <div class="trio-caption">Collaborative Realization · From Field to Gallery<br>Field work team · Curation team members</div>
-  </div>
-  <div class="trio-item">
-    <img src="heylittlebird8.jpg" alt="Thank you for viewing — exhibition poster"/>
-    <div class="trio-caption">Exhibition Poster · Arts SU Exhibition & Project Space<br>14 Nov – 3 Dec 2025</div>
+    <div class="duo-caption">Collaborative Realization · From Field to Gallery · Field work team · Curation team</div>
   </div>
 </div>
 
@@ -681,55 +673,85 @@ document.querySelectorAll('.full-bleed img').forEach(img => {
     img.style.transform = `scale(1.06) translateY(${pct * 30}px)`;
   }, { passive: true });
 });
-// ── FLIPBOOK ──
-const TOTAL = 56;
-let currentPage = 1;
-const pageImg   = document.getElementById('page-img');
+// ── FLIPBOOK (2-page spread) ──
+// Page 1 = cover (single). Pages 2-56 shown as left+right pairs.
+// Spread index: 0 = cover(p1), 1 = p2+p3, 2 = p4+p5 … 27 = p54+p55, 28 = p56(single)
+const TOTAL_PAGES = 56;
+const pagesContainer = document.getElementById('flipbook-pages');
+const imgL      = document.getElementById('page-img-l');
+const imgR      = document.getElementById('page-img-r');
 const pageCur   = document.getElementById('page-current');
 const btnPrev   = document.getElementById('btn-prev');
 const btnNext   = document.getElementById('btn-next');
 const thumbStrip= document.getElementById('flipbook-thumb-strip');
 
-// build thumbnails
-for (let i = 1; i <= TOTAL; i++) {
-  const img = document.createElement('img');
-  img.className = 'thumb' + (i === 1 ? ' active' : '');
-  img.src = `pages-${String(i).padStart(2,'0')}.jpg`;
-  img.alt = `Page ${i}`;
-  img.addEventListener('click', () => goTo(i));
-  thumbStrip.appendChild(img);
+// Build spread list: each entry = [leftPage, rightPage|null]
+const spreads = [[1, null]]; // cover
+for (let p = 2; p <= TOTAL_PAGES; p += 2) {
+  spreads.push([p, p + 1 <= TOTAL_PAGES ? p + 1 : null]);
 }
+const TOTAL_SPREADS = spreads.length;
+let currentSpread = 0;
 
-function goTo(n) {
-  if (n < 1 || n > TOTAL) return;
-  pageImg.classList.add('fade');
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function goTo(idx) {
+  if (idx < 0 || idx >= TOTAL_SPREADS) return;
+  imgL.classList.add('fade');
+  imgR.classList.add('fade');
   setTimeout(() => {
-    currentPage = n;
-    pageImg.src = `pages-${String(n).padStart(2,'0')}.jpg`;
-    pageCur.textContent = n;
-    btnPrev.disabled = n === 1;
-    btnNext.disabled = n === TOTAL;
-    // update thumbs
+    currentSpread = idx;
+    const [lp, rp] = spreads[idx];
+    const isSingle = rp === null;
+
+    pagesContainer.className = isSingle ? 'single' : '';
+    imgL.src = `pages-${pad(lp)}.jpg`;
+    imgL.alt = `Page ${lp}`;
+
+    if (!isSingle) {
+      imgR.style.display = 'block';
+      imgR.src = `pages-${pad(rp)}.jpg`;
+      imgR.alt = `Page ${rp}`;
+      pageCur.textContent = `${lp}–${rp}`;
+    } else {
+      imgR.style.display = 'none';
+      pageCur.textContent = `${lp}`;
+    }
+
+    btnPrev.disabled = idx === 0;
+    btnNext.disabled = idx === TOTAL_SPREADS - 1;
+
+    // update thumb highlights
     thumbStrip.querySelectorAll('.thumb').forEach((t, i) => {
-      t.classList.toggle('active', i + 1 === n);
+      t.classList.toggle('active', i === idx);
     });
-    // scroll active thumb into view
     const active = thumbStrip.querySelector('.thumb.active');
     if (active) active.scrollIntoView({ block:'nearest', inline:'nearest' });
-    pageImg.classList.remove('fade');
+
+    imgL.classList.remove('fade');
+    if (!isSingle) imgR.classList.remove('fade');
   }, 180);
 }
 
-btnPrev.addEventListener('click', () => goTo(currentPage - 1));
-btnNext.addEventListener('click', () => goTo(currentPage + 1));
+// Build thumbnails (one per spread, showing left page)
+spreads.forEach(([lp], idx) => {
+  const img = document.createElement('img');
+  img.className = 'thumb' + (idx === 0 ? ' active' : '');
+  img.src = `pages-${pad(lp)}.jpg`;
+  img.alt = `Spread ${idx + 1}`;
+  img.addEventListener('click', () => goTo(idx));
+  thumbStrip.appendChild(img);
+});
+
+btnPrev.addEventListener('click', () => goTo(currentSpread - 1));
+btnNext.addEventListener('click', () => goTo(currentSpread + 1));
 btnPrev.disabled = true;
 
-// keyboard navigation when flipbook is in view
 document.addEventListener('keydown', e => {
   const rect = document.getElementById('flipbook-wrap').getBoundingClientRect();
   if (rect.top < window.innerHeight && rect.bottom > 0) {
-    if (e.key === 'ArrowRight') goTo(currentPage + 1);
-    if (e.key === 'ArrowLeft')  goTo(currentPage - 1);
+    if (e.key === 'ArrowRight') goTo(currentSpread + 1);
+    if (e.key === 'ArrowLeft')  goTo(currentSpread - 1);
   }
 });
 </script>
