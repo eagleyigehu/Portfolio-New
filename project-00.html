@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>The Mythical Bird — Emma Hu</title>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Serif+SC:wght@400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
-<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   html,body { width:100%; height:100%; overflow:hidden; background:#0e0e0c; cursor:none; }
@@ -36,23 +34,18 @@
   #portraits {
     position:fixed; bottom:0; left:0; right:0;
     display:flex; justify-content:space-between; align-items:flex-end;
-    z-index:10; pointer-events:none; padding:0;
+    z-index:10; pointer-events:none; padding:0 3vw;
   }
   .portrait {
+    width:clamp(130px,16vw,240px);
     opacity:0; transform:translateY(24px);
     transition:opacity 0.5s, transform 0.5s, filter 0.4s;
     filter:brightness(0.45) saturate(0);
-    flex-shrink:0;
   }
   .portrait img { width:100%; height:auto; display:block; }
   .portrait.visible { opacity:1; transform:translateY(0); }
   .portrait.speaking { filter:brightness(1) saturate(1); }
   .portrait.silent   { filter:brightness(0.4) saturate(0); }
-
-  /* 左侧 Lin Wei：登山图，竖版 */
-  #portrait-lin  { width:clamp(180px,22vw,360px); }
-  /* 右侧 Mara：观鸟人图，横版 */
-  #portrait-mara { width:clamp(220px,28vw,420px); }
 
   .nav-back {
     position:fixed; top:1.4rem; left:1.8rem; z-index:200;
@@ -239,39 +232,6 @@
     transition:all 0.2s;
   }
   .end-btn:hover { color:rgba(245,240,232,0.9); border-color:rgba(168,200,176,0.48); }
-  /* MAPBOX LAYER */
-  #map-layer {
-    position:fixed; inset:0; z-index:5;
-    opacity:0; pointer-events:none;
-    transition:opacity 0.8s ease;
-  }
-  #map-layer.visible { opacity:1; pointer-events:auto; }
-  #map-container { width:100%; height:100%; }
-
-  .mapboxgl-popup-content {
-    background:rgba(10,10,8,0.88) !important;
-    border:0.5px solid rgba(255,255,255,0.15) !important;
-    color:rgba(245,240,232,0.9) !important;
-    font-family:'DM Mono',monospace !important;
-    font-size:0.65rem !important;
-    letter-spacing:0.06em !important;
-    padding:0.8rem 1rem !important;
-    backdrop-filter:blur(8px) !important;
-    border-radius:0 !important;
-    max-width:200px !important;
-  }
-  .mapboxgl-popup-tip { display:none !important; }
-  .mapboxgl-ctrl-bottom-left, .mapboxgl-ctrl-bottom-right { display:none !important; }
-
-  .map-hint {
-    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-    font-family:'DM Mono',monospace; font-size:0.62rem;
-    letter-spacing:0.14em; text-transform:uppercase;
-    color:rgba(255,255,255,0.35);
-    text-align:center; line-height:2; z-index:6;
-    pointer-events:none; opacity:0; transition:opacity 0.5s;
-  }
-  .map-hint.show { opacity:1; }
 </style>
 </head>
 <body>
@@ -289,18 +249,12 @@
 <div id="fade"></div>
 <div id="scene"><div class="scene-tint" id="tint"></div></div>
 
-<!-- MAPBOX MAP LAYER (shown during scene 4) -->
-<div id="map-layer">
-  <div id="map-container"></div>
-</div>
-<div class="map-hint" id="map-hint">探索地图 · Click anywhere to continue</div>
-
 <div id="portraits">
-  <!-- 左侧：Dr. Lin Wei（登山_透明底_拷贝.png） -->
+  <!-- ▼ 左侧：林蔚 — 替换为你的人物图片文件名 -->
   <div class="portrait" id="portrait-lin">
     <img src="登山_透明底_拷贝.png" alt="Dr. Lin Wei"/>
   </div>
-  <!-- 右侧：Mara（观鸟人_拷贝.png） -->
+  <!-- ▼ 右侧：玛拉 — 替换为你的人物图片文件名 -->
   <div class="portrait" id="portrait-mara">
     <img src="观鸟人_拷贝.png" alt="Mara"/>
   </div>
@@ -406,7 +360,6 @@ const story = [
   {
     bg:'mythical-bird-scene-05.png',
     chapter:'Ch.3  The Pattern · 规律',
-    mapScene: true,
     lines:[
       { who:'lin',
         en:'These coordinates are not random. When plotted, the data points precisely circumvent every officially patrolled marine sanctuary along the East Asian-Australasian Flyway.',
@@ -473,73 +426,6 @@ const story = [
   },
 ];
 
-// ── MAPBOX ──
-mapboxgl.accessToken = 'pk.eyJ1IjoiZW1tYWh1MjAwNjAxMzEiLCJhIjoiY21vNm8xMG5sMjN3djJxcWF5eXJqdTljdyJ9.3bLzesxIGFlguMHlKcPrRg';
-let map = null;
-const mapLayer = document.getElementById('map-layer');
-const mapHint  = document.getElementById('map-hint');
-
-const MIGRATION_POINTS = [
-  { lng:122.1, lat:29.9, label:'Island No.5 · 五号岛', type:'breeding',  desc:'Last confirmed breeding 2021\n最后确认繁殖地' },
-  { lng:119.8, lat:26.1, label:'Matsu · 马祖',         type:'stopover',  desc:'Historical stopover site\n历史停歇地' },
-  { lng:119.5, lat:25.1, label:'Min River Estuary · 闽江口', type:'stopover', desc:'Wintering foraging area\n越冬觅食区' },
-  { lng:120.0, lat:23.5, label:'Taiwan Strait · 台湾海峡', type:'stopover', desc:'Active migration corridor\n活跃迁徙廊道' },
-  { lng:121.5, lat:25.0, label:'ID-2046 Last Position', type:'anomaly',  desc:'ANOMALY — 28.5°N deviation\n异常：北纬28.5度偏离' },
-  { lng:121.0, lat:22.0, label:'Illegal vessel route · 走私路线', type:'vessel', desc:'Signal source: transport vessel\n信号源：非法运输船' },
-];
-
-function initMap() {
-  if (map) return;
-  map = new mapboxgl.Map({
-    container: 'map-container',
-    style: 'mapbox://styles/emmahu20060131/cmodwrtal000t01sl8df9h15b',
-    center: [121, 27],
-    zoom: 5.5,
-    attributionControl: false,
-  });
-  map.on('load', () => {
-    // migration route line
-    map.addSource('route', { type:'geojson', data:{
-      type:'Feature', geometry:{ type:'LineString',
-        coordinates: MIGRATION_POINTS.map(p=>[p.lng,p.lat])
-      }
-    }});
-    map.addLayer({ id:'route-line', type:'line', source:'route',
-      layout:{'line-join':'round','line-cap':'round'},
-      paint:{'line-color':'#c8a0a0','line-width':1.5,'line-dasharray':[2,3],'line-opacity':0.7}
-    });
-
-    // markers
-    MIGRATION_POINTS.forEach(p => {
-      const el = document.createElement('div');
-      const colors = { breeding:'#a8c8b0', stopover:'#9ab0c8', anomaly:'#c8a0a0', vessel:'#c8b060' };
-      el.style.cssText = `width:10px;height:10px;border-radius:50%;background:${colors[p.type]};
-        border:1.5px solid rgba(255,255,255,0.5);cursor:pointer;
-        box-shadow:0 0 8px ${colors[p.type]};`;
-      if (p.type === 'anomaly') {
-        el.style.animation = 'pulse 1.5s infinite';
-        const style = document.createElement('style');
-        style.textContent = `@keyframes pulse{0%,100%{box-shadow:0 0 4px #c8a0a0}50%{box-shadow:0 0 16px #c8a0a0}}`;
-        document.head.appendChild(style);
-      }
-      new mapboxgl.Marker(el).setLngLat([p.lng, p.lat])
-        .setPopup(new mapboxgl.Popup({ offset:12, closeButton:false })
-          .setHTML(`<div style="line-height:1.7">${p.label}<br><span style="opacity:0.55;font-size:0.58rem">${p.desc.replace('\n','<br>')}</span></div>`))
-        .addTo(map);
-    });
-  });
-}
-
-function showMap() {
-  initMap();
-  mapLayer.classList.add('visible');
-  setTimeout(() => mapHint.classList.add('show'), 1200);
-}
-function hideMap() {
-  mapLayer.classList.remove('visible');
-  mapHint.classList.remove('show');
-}
-
 // ENGINE
 let scene=0, line=0, typing=false, timer=null, started=false;
 const cur    = document.getElementById('cursor');
@@ -599,7 +485,6 @@ function loadScene(idx,instant=false){
   setTimeout(()=>bg.classList.add('active'),instant?0:50);
   tint.classList.add('dim');
   hideChoices();
-  if(s.mapScene){ showMap(); } else { hideMap(); }
   showLine();
 }
 
