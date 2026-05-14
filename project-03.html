@@ -3,357 +3,745 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- ============================================================
-  修改这里：把项目标题填进去
-  ============================================================ -->
-<title>Scientific Illustration — Emma Hu</title>
-
+<title>Hey Little Bird, How Did You Learn To Fly? — Emma Hu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
-  /* ── 颜色变量（和主页保持一致，不需要改） ── */
   :root {
-    --ink: #1a1a18;
-    --ink-2: #4a4840;
-    --ink-3: #8a8880;
-    --accent: #5a7a6a;
-    --rule: rgba(26,24,20,0.12);
-    --serif: 'EB Garamond', Georgia, serif;
+    --white: #fafaf8;
+    --ink: #1a1814;
+    --ink-2: #4a4640;
+    --ink-3: #9a9690;
+    --rule: rgba(26,24,20,0.1);
+    --serif: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
     --mono: 'DM Mono', monospace;
-    --sans: 'Inter', system-ui, sans-serif;
   }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
 
   body {
-    background: linear-gradient(
-      to bottom,
-      #9dc3cc 0%,
-      #bbced2 20%,
-      #dbddd7 40%,
-      #ebe4da 60%,
-      #edd7c8 80%,
-      #f6cbbd 100%
-    );
-    background-attachment: scroll;
-    background-size: 100% 500vh;
-    background-repeat: no-repeat;
-    background-color: #f6cbbd;
+    background: var(--white);
     color: var(--ink);
     font-family: var(--serif);
     font-size: 18px;
-    line-height: 1.65;
-    -webkit-font-smoothing: antialiased;
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: none;
   }
 
-  /* ── 导航 ── */
+  /* CURSOR */
+  .cursor {
+    position: fixed;
+    width: 6px; height: 6px;
+    background: var(--ink);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s, width 0.2s, height 0.2s;
+  }
+  .cursor.big {
+    width: 32px; height: 32px;
+    background: transparent;
+    border: 1px solid var(--ink);
+  }
+
+  /* NAV */
   nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.1rem 2.5rem;
-    border-bottom: 0.5px solid var(--rule);
-    background: rgba(157,195,204,0.5);
-    backdrop-filter: blur(12px);
-    position: sticky;
-    top: 0;
+    position: fixed; top: 0; left: 0; right: 0;
     z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 2.5rem;
+    mix-blend-mode: multiply;
   }
   .nav-back {
-    font-family: var(--sans);
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-2);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
+    font-family: var(--mono); font-size: 0.62rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-2); text-decoration: none;
     transition: color 0.2s;
   }
-  .nav-back:hover { color: var(--accent); }
+  .nav-back:hover { color: var(--ink); }
   .nav-title {
-    font-family: var(--serif);
-    font-size: 1rem;
-    color: var(--ink);
+    font-family: var(--mono); font-size: 0.58rem;
+    letter-spacing: 0.1em; color: var(--ink-3);
   }
 
-  /* ── 页面内容容器 ── */
-  .project-wrap {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 5rem 2.5rem 8rem;
+  /* SCROLL PROGRESS */
+  #scroll-bar {
+    position: fixed; top: 0; left: 0; height: 1px;
+    background: var(--ink); z-index: 200;
+    width: 0%; transition: width 0.1s linear;
   }
 
-  /* ── 标题区 ── */
-  .project-eyebrow {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 1rem;
+  /* FLIGHT LINE — vertical thread running through page */
+  .flight-line {
+    position: fixed; top: 0; bottom: 0;
+    left: 50%; width: 0.5px;
+    background: linear-gradient(to bottom, transparent, var(--rule) 10%, var(--rule) 90%, transparent);
+    z-index: 0; pointer-events: none;
   }
-  .project-title {
+
+  /* ── SECTIONS ── */
+  section { position: relative; }
+
+  /* fade-in on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.15s; }
+  .reveal-delay-2 { transition-delay: 0.3s; }
+  .reveal-delay-3 { transition-delay: 0.45s; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    position: relative;
+  }
+  .hero-eyebrow {
+    font-family: var(--mono); font-size: 0.62rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 2rem;
+  }
+  .hero-title {
     font-family: var(--serif);
-    font-size: clamp(2.2rem, 5vw, 4rem);
-    font-weight: 400;
-    font-style: italic;
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
-    color: var(--ink);
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-style: italic; font-weight: 300;
+    line-height: 1.0; letter-spacing: -0.01em;
+    color: var(--ink); margin-bottom: 1rem;
   }
-  .project-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem 2.5rem;
-    border-top: 0.5px solid var(--rule);
-    border-bottom: 0.5px solid var(--rule);
-    padding: 1.2rem 0;
+  .hero-sub {
+    font-family: var(--serif);
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    font-style: italic; color: var(--ink-3);
     margin-bottom: 3rem;
   }
-  .meta-item {}
-  .meta-label {
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    display: block;
-    margin-bottom: 0.2rem;
+  .hero-meta {
+    font-family: var(--mono); font-size: 0.6rem;
+    letter-spacing: 0.12em; color: var(--ink-3);
+    line-height: 2;
   }
-  .meta-value {
-    font-family: var(--sans);
-    font-size: 0.85rem;
-    color: var(--ink-2);
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    font-family: var(--mono); font-size: 0.55rem;
+    letter-spacing: 0.16em; color: var(--ink-3);
+    display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+    animation: float 2.5s infinite ease-in-out;
+  }
+  .scroll-hint::after {
+    content: ''; display: block; width: 0.5px; height: 40px;
+    background: var(--ink-3);
+    animation: grow 2.5s infinite ease-in-out;
+  }
+  @keyframes float { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-6px)} }
+  @keyframes grow  { 0%,100%{transform:scaleY(0.3)} 50%{transform:scaleY(1)} }
+
+  /* ── FULL BLEED IMAGE ── */
+  .full-bleed {
+    width: 100vw; height: 90vh;
+    overflow: hidden; position: relative;
+  }
+  .full-bleed img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+    transform: scale(1.06);
+    transition: transform 0.1s linear;
+  }
+  .full-bleed .caption {
+    position: absolute; bottom: 2rem; right: 2.5rem;
+    font-family: var(--mono); font-size: 0.58rem;
+    letter-spacing: 0.1em; color: rgba(255,255,255,0.55);
   }
 
-  /* ── 主图 ── */
-  .project-hero-img {
-    width: 100%;
-    height: auto;
-    display: block;
-    margin-bottom: 3rem;
+  /* ── CHAPTER MARKER ── */
+  .chapter {
+    padding: 5rem 2.5rem 2rem;
+    display: flex; align-items: center; gap: 1.5rem;
   }
-
-  /* ── 正文段落 ── */
-  .project-body {
+  .chapter-num {
+    font-family: var(--mono); font-size: 0.6rem;
+    letter-spacing: 0.18em; color: var(--ink-3);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+  .chapter-title {
     font-family: var(--serif);
-    font-size: 1.1rem;
-    color: var(--ink-2);
-    line-height: 1.85;
-    margin-bottom: 1.8rem;
-    max-width: 680px;
-  }
-  .project-body strong { color: var(--ink); font-weight: 500; }
-
-  /* ── 小标题 ── */
-  .project-heading {
-    font-family: var(--serif);
-    font-size: 1.4rem;
-    font-style: italic;
-    color: var(--ink);
-    margin: 3rem 0 1rem;
-    border-left: 2px solid var(--accent);
-    padding-left: 1rem;
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-style: italic; font-weight: 300;
+    color: var(--ink); line-height: 1.1;
   }
 
-  /* ── 图片网格（多图展示用） ── */
-  .image-grid {
+  /* ── TEXT + IMAGE PAIRS ── */
+  .pair {
     display: grid;
-    gap: 1rem;
-    margin: 2rem 0;
-  }
-  .image-grid.cols-2 { grid-template-columns: 1fr 1fr; }
-  .image-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
-  .image-grid img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-  .img-caption {
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    color: var(--ink-3);
-    letter-spacing: 0.08em;
-    margin-top: 0.5rem;
-  }
-
-  /* ── 引用块 ── */
-  blockquote {
-    border-left: 2px solid var(--rule);
-    padding: 0.5rem 0 0.5rem 1.5rem;
-    margin: 2rem 0;
-    font-style: italic;
-    color: var(--ink-3);
-    font-size: 1rem;
-  }
-
-  /* ── 标签 ── */
-  .tag-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin: 2rem 0;
-  }
-  .tag {
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.3rem 0.65rem;
-    border: 0.5px solid var(--rule);
-    color: var(--ink-2);
-  }
-
-  /* ── 返回 / 下一个项目导航 ── */
-  .project-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    grid-template-columns: 1fr 1fr;
+    gap: 0; min-height: 70vh;
     border-top: 0.5px solid var(--rule);
-    margin-top: 5rem;
-    padding-top: 2rem;
+  }
+  .pair.reverse { direction: rtl; }
+  .pair.reverse > * { direction: ltr; }
+  .pair-img { overflow: hidden; }
+  .pair-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pair-text {
+    padding: 4rem 3.5rem;
+    display: flex; flex-direction: column; justify-content: center;
+    background: var(--white);
+  }
+  .pair-label {
+    font-family: var(--mono); font-size: 0.58rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 1.2rem;
+  }
+  .pair-heading {
+    font-family: var(--serif);
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    font-style: italic; font-weight: 300;
+    line-height: 1.2; color: var(--ink);
+    margin-bottom: 1.2rem;
+  }
+  .pair-body {
+    font-size: 1rem; color: var(--ink-2);
+    line-height: 1.85; max-width: 420px;
+  }
+  .pair-body + .pair-body { margin-top: 1rem; }
+  .pair-body em { font-style: italic; color: var(--ink); }
+
+  /* ── QUOTE ── */
+  .quote-block {
+    padding: 7rem 2.5rem;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+  }
+  .quote-text {
+    font-family: var(--serif);
+    font-size: clamp(1.6rem, 4vw, 3rem);
+    font-style: italic; font-weight: 300;
+    line-height: 1.3; color: var(--ink);
+    max-width: 780px;
+  }
+  .quote-attr {
+    font-family: var(--mono); font-size: 0.6rem;
+    letter-spacing: 0.12em; color: var(--ink-3);
+    margin-top: 1.5rem; display: block;
+  }
+
+  /* ── THREE-UP GRID ── */
+  .trio {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    border-top: 0.5px solid var(--rule);
+  }
+  .trio-item { overflow: hidden; position: relative; }
+  .trio-item img { width: 100%; height: 55vh; object-fit: cover; display: block; transition: transform 0.5s ease; }
+  .trio-item:hover img { transform: scale(1.04); }
+  .trio-caption {
+    padding: 1rem 1.2rem;
+    font-family: var(--mono); font-size: 0.58rem;
+    letter-spacing: 0.08em; color: var(--ink-3);
+    line-height: 1.6; border-bottom: 0.5px solid var(--rule);
+  }
+
+  /* ── FULL TEXT SPREAD ── */
+  .text-spread {
+    padding: 6rem 12vw;
+    border-top: 0.5px solid var(--rule);
+    display: grid; grid-template-columns: 1fr 1.8fr; gap: 5rem;
+    align-items: start;
+  }
+  .spread-label {
+    font-family: var(--mono); font-size: 0.6rem;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-3); padding-top: 0.4rem;
+    position: sticky; top: 5rem;
+  }
+  .spread-content {}
+  .spread-heading {
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-style: italic; font-weight: 300;
+    margin-bottom: 1.5rem; color: var(--ink);
+  }
+  .spread-body {
+    font-size: 1rem; color: var(--ink-2);
+    line-height: 1.9; margin-bottom: 1rem;
+  }
+
+  /* ── CREDITS ── */
+  .credits {
+    padding: 6rem 12vw;
+    border-top: 0.5px solid var(--rule);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+  }
+  .credits-heading {
+    font-family: var(--serif);
+    font-size: 1.2rem; font-style: italic;
+    color: var(--ink); margin-bottom: 1.2rem;
+  }
+  .credits-body {
+    font-family: var(--mono); font-size: 0.68rem;
+    letter-spacing: 0.04em; color: var(--ink-2);
+    line-height: 2.2;
+  }
+  .credits-body strong { color: var(--ink); font-weight: 400; }
+
+  /* ── CLOSING ── */
+  .closing {
+    min-height: 80vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 4rem 2rem;
+    border-top: 0.5px solid var(--rule);
+  }
+  .closing-title {
+    font-family: var(--serif);
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-style: italic; font-weight: 300;
+    line-height: 1.1; color: var(--ink);
+    margin-bottom: 2rem;
+  }
+  .closing-poster {
+    width: min(340px, 80vw);
+    margin: 2rem 0;
+    border: 0.5px solid var(--rule);
+  }
+  .closing-poster img { width: 100%; display: block; }
+  .closing-dates {
+    font-family: var(--mono); font-size: 0.62rem;
+    letter-spacing: 0.12em; color: var(--ink-3);
+    line-height: 2; margin-top: 1.5rem;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .project-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 2rem 2.5rem;
+    border-top: 0.5px solid var(--rule);
   }
   .project-nav a {
-    font-family: var(--sans);
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-2);
-    text-decoration: none;
+    font-family: var(--mono); font-size: 0.65rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-2); text-decoration: none;
     transition: color 0.2s;
   }
-  .project-nav a:hover { color: var(--accent); }
+  .project-nav a:hover { color: var(--ink); }
 
-  @media (max-width: 640px) {
-    .project-wrap { padding: 3rem 1.2rem 5rem; }
-    .image-grid.cols-2, .image-grid.cols-3 { grid-template-columns: 1fr; }
-    .project-meta { gap: 0.8rem 1.5rem; }
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .pair { grid-template-columns: 1fr; min-height: auto; }
+    .pair.reverse { direction: ltr; }
+    .trio { grid-template-columns: 1fr; }
+    .text-spread { grid-template-columns: 1fr; gap: 2rem; padding: 4rem 6vw; }
+    .spread-label { position: static; }
+    .credits { grid-template-columns: 1fr; gap: 2rem; padding: 4rem 6vw; }
+    nav { padding: 1rem 1.2rem; }
   }
+  /* ── FLIPBOOK ── */
+  #flipbook-wrap {
+    background: #f0ede8;
+    padding: 3rem 0 4rem;
+    border-top: 0.5px solid var(--rule);
+  }
+  #flipbook {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  #flipbook-pages {
+    position: relative;
+    background: #fff;
+    box-shadow: 0 4px 40px rgba(0,0,0,0.12), 2px 2px 0 #e0ddd8;
+    overflow: hidden;
+  }
+  #page-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: opacity 0.2s ease;
+  }
+  #page-img.fade { opacity: 0; }
+
+  #flipbook-ui {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0 0.8rem;
+  }
+  #flipbook-ui button {
+    font-family: var(--mono); font-size: 0.9rem;
+    background: none; border: 0.5px solid var(--rule);
+    color: var(--ink-2); padding: 0.5rem 1.2rem;
+    cursor: pointer; transition: all 0.2s;
+  }
+  #flipbook-ui button:hover {
+    background: var(--ink); color: #fff; border-color: var(--ink);
+  }
+  #flipbook-ui button:disabled {
+    opacity: 0.25; cursor: default;
+  }
+  #page-info {
+    font-family: var(--mono); font-size: 0.62rem;
+    letter-spacing: 0.1em; color: var(--ink-3);
+  }
+
+  /* thumbnail strip */
+  #flipbook-thumb-strip {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    padding-top: 0.8rem;
+    border-top: 0.5px solid var(--rule);
+  }
+  .thumb {
+    width: calc((100% - 4px*9) / 10);
+    aspect-ratio: 0.707;
+    object-fit: cover;
+    cursor: pointer;
+    opacity: 0.45;
+    transition: opacity 0.2s;
+    border: 1.5px solid transparent;
+  }
+  .thumb:hover { opacity: 0.8; }
+  .thumb.active { opacity: 1; border-color: var(--ink); }
+
 </style>
 </head>
 <body>
 
-<!-- 导航 -->
+<div class="cursor" id="cursor"></div>
+<div id="scroll-bar"></div>
+<div class="flight-line"></div>
+
 <nav>
   <a href="index.html" class="nav-back">← Back</a>
-  <!-- ▼ 改成项目标题 -->
-  <span class="nav-title">Scientific Illustration</span>
+  <span class="nav-title">Hey Little Bird · Solo Exhibition · 2025</span>
 </nav>
 
-<div class="project-wrap">
-
-  <!-- ══════════════════════════════════════════
-    ▼ 修改区域 START
-    每个项目复制这个文件，改下面的内容即可
-  ══════════════════════════════════════════ -->
-
-  <!-- 类别标签（mono小字） -->
-  <p class="project-eyebrow">Scientific Illustration · 2024</p>
-
-  <!-- 主标题 -->
-  <h1 class="project-title">Scientific Illustration</h1>
-
-  <!-- 项目信息栏：改 meta-value 里的文字 -->
-  <div class="project-meta">
-    <div class="meta-item">
-      <span class="meta-label">Year</span>
-      <span class="meta-value">2024</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-label">Medium</span>
-      <span class="meta-value">Watercolour, Digital</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-label">Context</span>
-      <span class="meta-value">UAL Illustration</span>
-    </div>
-    <div class="meta-item">
-      <span class="meta-label">Role</span>
-      <span class="meta-value">Illustrator & Researcher</span>
-    </div>
+<!-- ═══════════ HERO ═══════════ -->
+<section id="hero">
+  <p class="hero-eyebrow reveal">Bio-inspired · Solo Science Outreach Exhibition</p>
+  <h1 class="hero-title reveal reveal-delay-1">Hey, Little Bird,<br>How Did You<br>Learn To Fly?</h1>
+  <p class="hero-sub reveal reveal-delay-2">Following one bird through its entire life.</p>
+  <div class="hero-meta reveal reveal-delay-3">
+    Arts SU Exhibition & Project Space, CSM<br>
+    Granary Square, N1C 4AA · Nov 14 – Dec 3, 2025
   </div>
+  <div class="scroll-hint">scroll</div>
+</section>
 
-  <!-- ▼ 主图：把 src 换成你的图片文件名 -->
-  <img class="project-hero-img" src="1.png" alt="Scientific Illustration hero image"/>
-
-  <!-- ▼ 正文：直接改文字 -->
-  <p class="project-body">
-    在这里写项目介绍。描述这个项目的背景、目的和你的工作方式。
-    可以分多段写，每段用 &lt;p class="project-body"&gt; 包起来。
-  </p>
-  <p class="project-body">
-    This project explores the intersection of scientific accuracy and visual storytelling. 
-    Each illustration was developed through <strong>extensive field observation</strong> 
-    and cross-referenced with specimen collections.
-  </p>
-
-  <!-- ▼ 小标题 -->
-  <h2 class="project-heading">Process</h2>
-
-  <p class="project-body">
-    描述你的创作过程。比如：从野外观察到草稿，再到最终水彩稿的流程。
-  </p>
-
-  <!-- ▼ 两列图片网格：把 src 换成你的图片 -->
-  <div class="image-grid cols-2">
-    <div>
-      <img src="1.png" alt="Process sketch"/>
-      <p class="img-caption">Initial field sketches</p>
-    </div>
-    <div>
-      <img src="1.png" alt="Final illustration"/>
-      <p class="img-caption">Final watercolour</p>
-    </div>
-  </div>
-
-  <!-- ▼ 引用/注解 -->
-  <blockquote>
-    "Scientific illustration bridges the gap between data and understanding —
-    making the invisible visible."
-  </blockquote>
-
-  <!-- ▼ 三列图片（可选，不需要就删掉这段） -->
-  <h2 class="project-heading">Details</h2>
-  <div class="image-grid cols-3">
-    <div>
-      <img src="1.png" alt="Detail 1"/>
-      <p class="img-caption">Plumage detail</p>
-    </div>
-    <div>
-      <img src="1.png" alt="Detail 2"/>
-      <p class="img-caption">Habitat context</p>
-    </div>
-    <div>
-      <img src="1.png" alt="Detail 3"/>
-      <p class="img-caption">Anatomical notes</p>
-    </div>
-  </div>
-
-  <!-- ▼ 标签：改成你的关键词 -->
-  <div class="tag-list">
-    <span class="tag">Scientific Illustration</span>
-    <span class="tag">Watercolour</span>
-    <span class="tag">Avian Ecology</span>
-    <span class="tag">UAL</span>
-  </div>
-
-  <!-- ══════════════════════════════════════════
-    ▼ 修改区域 END
-  ══════════════════════════════════════════ -->
-
-  <!-- 底部导航：改链接和文字 -->
-  <div class="project-nav">
-    <a href="index.html">← All Projects</a>
-    <!-- ▼ 改成下一个项目的文件名和标题 -->
-    <a href="project-02.html">Marine Biology Illustration →</a>
-  </div>
-
+<!-- ═══════════ FULL BLEED 1: Exhibition Overview ═══════════ -->
+<div class="full-bleed reveal">
+  <img src="heylittlebird.jpg" alt="Exhibition overview — Bio-inspired"/>
+  <span class="caption">Exhibition overview · Bio-inspired</span>
 </div>
 
+<!-- ═══════════ CH.1: The Bird ═══════════ -->
+<div class="chapter reveal">
+  <span class="chapter-num">01</span>
+  <h2 class="chapter-title">The Bird</h2>
+</div>
+
+<div class="pair reveal">
+  <div class="pair-img">
+    <img src="heylittlebird2.jpg" alt="Individual C50-7665 — White-faced Plover"/>
+  </div>
+  <div class="pair-text">
+    <p class="pair-label">Individual C50-7665</p>
+    <h3 class="pair-heading">A Migratory Life,<br>Measured in Rings</h3>
+    <p class="pair-body">
+      Seven White-faced Plovers (<em>Charadrius alexandrinus dealbatus</em>) were released during this study. Each individual was assigned a globally unique ring number — a permanent record linking the bird to its origin, enabling researchers to trace its migratory route, lifespan, and recapture history.
+    </p>
+    <p class="pair-body">
+      Central to this piece is <em>Individual C50-7665 (BM/YR)</em> — the ocarina modelled after this bird is adorned with a physical replica of its unique leg rings, giving voice to a specific set of research coordinates.
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════ QUOTE 1 ═══════════ -->
+<div class="quote-block reveal">
+  <div>
+    <p class="quote-text">"By giving a voice to a specific set of research coordinates, this work invites the audience to perceive a migratory bird not merely as a data point in a national ringing centre, but as a singular life with a unique history."</p>
+    <span class="quote-attr">— Exhibition Statement</span>
+  </div>
+</div>
+
+<!-- ═══════════ PAIR TEXT: condensed ═══════════ -->
+<div class="pair reveal">
+  <div class="pair-img">
+    <img src="heylittlebird2.jpg" alt="Individual C50-7665"/>
+  </div>
+  <div class="pair-text">
+    <p class="pair-label">Individual C50-7665</p>
+    <h3 class="pair-heading">A Migratory Life,<br>Measured in Rings</h3>
+    <p class="pair-body">
+      Seven White-faced Plovers (<em>Charadrius alexandrinus dealbatus</em>) were released. Each ring number permanently identifies one bird — enabling researchers to trace its route, lifespan, and recapture history across borders.
+    </p>
+    <p class="pair-body">
+      The ocarina modelled after <em>Individual C50-7665 (BM/YR)</em> carries a physical replica of its unique leg rings — giving voice to a specific set of research coordinates, and a singular life.
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════ QUOTE 1 ═══════════ -->
+<div class="quote-block reveal">
+  <div>
+    <p class="quote-text">"Not merely as a data point in a national ringing centre, but as a singular life with a unique history."</p>
+    <span class="quote-attr">— Exhibition Statement</span>
+  </div>
+</div>
+
+<!-- ═══════════ CH.2: The Field ═══════════ -->
+<div class="chapter reveal">
+  <span class="chapter-num">02</span>
+  <h2 class="chapter-title">The Field</h2>
+</div>
+
+<div class="pair reverse reveal">
+  <div class="pair-img">
+    <img src="heylittlebird6.jpg" alt="Bird Banding and Data"/>
+  </div>
+  <div class="pair-text">
+    <p class="pair-label">Bird Banding & Data · 2025</p>
+    <h3 class="pair-heading">The First Bird<br>I Ever Handled</h3>
+    <p class="pair-body">
+      One month of field ringing work — observing, recording, and learning to read individual birds. This direct encounter became the starting point for everything in the exhibition.
+    </p>
+    <p class="pair-body">
+      Each bird looks slightly different up close. Some have "smoky eye" sockets; others have bright, forgiving eyes that seem to regard the whole world with patience.
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════ CH.3: The Science ═══════════ -->
+<div class="chapter reveal">
+  <span class="chapter-num">03</span>
+  <h2 class="chapter-title">The Science</h2>
+</div>
+
+<div class="pair reveal">
+  <div class="pair-img">
+    <img src="heylittlebird3.jpg" alt="White-faced Plovers Incubating Eggs"/>
+  </div>
+  <div class="pair-text">
+    <p class="pair-label">Scientific Illustration · Charadrius alexandrinus · 26.06.2025</p>
+    <h3 class="pair-heading">White-faced Plovers<br>Incubating Eggs...</h3>
+    <p class="pair-body">
+      Annotated scientific plates document incubation behaviour and key morphological features — white forehead, lateral breast patches, densely patterned crown — to help the public identify this species in the field.
+    </p>
+    <p class="pair-body" style="margin-top:1rem;font-size:0.82rem;font-family:var(--mono);letter-spacing:0.05em;color:var(--ink-3);">
+      Medium: Digital illustration · Ceramic (Stoneware) · Exhibition booklet (Print)
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════ FULL BLEED 2 ═══════════ -->
+<div class="full-bleed reveal">
+  <img src="heylittlebird4.jpg" alt="Booklet reading"/>
+  <span class="caption">Artist-led Interpretation · Inside Spread</span>
+</div>
+
+<!-- ═══════════ CH.4 BOOKLET READER ═══════════ -->
+<div class="chapter reveal">
+  <span class="chapter-num">04</span>
+  <h2 class="chapter-title">The Booklet</h2>
+</div>
+
+<div class="text-spread reveal" style="padding-bottom:2rem;">
+  <div class="spread-label">Field Notes from<br>A Tropical Island</div>
+  <div class="spread-content">
+    <h3 class="spread-heading">56 pages. One bird's life, start to finish.</h3>
+    <p class="spread-body">
+      Designed as a handheld companion to the ceramic sculptures, the booklet translates one month of field ringing data — egg flotation tests, banding records, individual observations — into an accessible visual narrative. Flip through all 56 pages below.
+    </p>
+  </div>
+</div>
+
+<!-- FLIPBOOK -->
+<div id="flipbook-wrap" class="reveal">
+  <div id="flipbook">
+    <div id="flipbook-pages">
+      <img id="page-img" src="pages-01.jpg" alt="Booklet page 1"/>
+    </div>
+    <div id="flipbook-ui">
+      <button id="btn-prev" aria-label="Previous page">←</button>
+      <div id="page-info">
+        <span id="page-current">1</span>
+        <span style="opacity:0.35"> / </span>
+        <span id="page-total">56</span>
+      </div>
+      <button id="btn-next" aria-label="Next page">→</button>
+    </div>
+    <div id="flipbook-thumb-strip">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CH.4: The Exhibition ═══════════ -->
+<div class="chapter reveal">
+  <span class="chapter-num">04</span>
+  <h2 class="chapter-title">The Exhibition</h2>
+</div>
+
+<div class="trio reveal">
+  <div class="trio-item">
+    <img src="heylittlebird5.jpg" alt="Knowledge Translation and Public Engagement"/>
+    <div class="trio-caption">Knowledge Translation & Public Engagement<br>Ocarina User Guide · Audience Interaction</div>
+  </div>
+  <div class="trio-item" style="grid-row: span 1;">
+    <img src="heylittlebird7.jpg" alt="Field work team and curation team"/>
+    <div class="trio-caption">Collaborative Realization · From Field to Gallery<br>Field work team · Curation team members</div>
+  </div>
+  <div class="trio-item">
+    <img src="heylittlebird8.jpg" alt="Thank you for viewing — exhibition poster"/>
+    <div class="trio-caption">Exhibition Poster · Arts SU Exhibition & Project Space<br>14 Nov – 3 Dec 2025</div>
+  </div>
+</div>
+
+<!-- ═══════════ CREDITS ═══════════ -->
+<div class="credits reveal">
+  <div>
+    <h3 class="credits-heading">Bird Ringing Group Members</h3>
+    <p class="credits-body">
+      <strong>解博雅 Boya Xie</strong> — Team Leader<br>
+      千乐 Le Qian<br>
+      雷语 Yu Lei<br>
+      宣言 Yan Xuan
+    </p>
+    <br>
+    <h3 class="credits-heading">Organisation</h3>
+    <p class="credits-body">
+      Layout Assistance: <strong>Isabella</strong><br>
+      Exhibition Organisation & Curation: <strong>Aisling, Angie</strong><br>
+      Arts Students' Union, CSM
+    </p>
+  </div>
+  <div>
+    <h3 class="credits-heading">Photography, Illustration,<br>Writing & Layout</h3>
+    <p class="credits-body">
+      <strong>胡逸格 Yige Hu (Emma)</strong>
+    </p>
+    <br>
+    <h3 class="credits-heading">Medium</h3>
+    <p class="credits-body">
+      Digital Illustration<br>
+      Ceramic (Stoneware)<br>
+      Exhibition Booklet (Print)<br>
+      Ceramic Ocarina (Playable)
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════ CLOSING ═══════════ -->
+<div class="closing reveal">
+  <h2 class="closing-title">Thank you<br>for viewing.</h2>
+  <div class="closing-poster">
+    <img src="heylittlebird8.jpg" alt="Exhibition poster"/>
+  </div>
+  <div class="closing-dates">
+    Private View: Thursday 13th November, 5pm – 7pm<br>
+    Exhibition: 14th November – 3rd December 2025<br>
+    Arts SU Exhibition & Project Space, CSM, Granary Square, N1C 4AA<br>
+    Fieldwork → Data → Ceramic
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="project-nav">
+  <a href="project-02.html">← Marine Biology</a>
+  <a href="project-04.html">The Mythical Bird →</a>
+</div>
+
+<script>
+// cursor
+const cur = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top  = e.clientY + 'px';
+});
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => cur.classList.add('big'));
+  el.addEventListener('mouseleave', () => cur.classList.remove('big'));
+});
+
+// scroll progress bar
+const bar = document.getElementById('scroll-bar');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  bar.style.width = pct + '%';
+});
+
+// reveal on scroll
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.1 });
+reveals.forEach(el => observer.observe(el));
+
+// subtle parallax on full-bleed images
+document.querySelectorAll('.full-bleed img').forEach(img => {
+  window.addEventListener('scroll', () => {
+    const rect = img.parentElement.getBoundingClientRect();
+    const pct  = -rect.top / window.innerHeight;
+    img.style.transform = `scale(1.06) translateY(${pct * 30}px)`;
+  }, { passive: true });
+});
+// ── FLIPBOOK ──
+const TOTAL = 56;
+let currentPage = 1;
+const pageImg   = document.getElementById('page-img');
+const pageCur   = document.getElementById('page-current');
+const btnPrev   = document.getElementById('btn-prev');
+const btnNext   = document.getElementById('btn-next');
+const thumbStrip= document.getElementById('flipbook-thumb-strip');
+
+// build thumbnails
+for (let i = 1; i <= TOTAL; i++) {
+  const img = document.createElement('img');
+  img.className = 'thumb' + (i === 1 ? ' active' : '');
+  img.src = `pages-${String(i).padStart(2,'0')}.jpg`;
+  img.alt = `Page ${i}`;
+  img.addEventListener('click', () => goTo(i));
+  thumbStrip.appendChild(img);
+}
+
+function goTo(n) {
+  if (n < 1 || n > TOTAL) return;
+  pageImg.classList.add('fade');
+  setTimeout(() => {
+    currentPage = n;
+    pageImg.src = `pages-${String(n).padStart(2,'0')}.jpg`;
+    pageCur.textContent = n;
+    btnPrev.disabled = n === 1;
+    btnNext.disabled = n === TOTAL;
+    // update thumbs
+    thumbStrip.querySelectorAll('.thumb').forEach((t, i) => {
+      t.classList.toggle('active', i + 1 === n);
+    });
+    // scroll active thumb into view
+    const active = thumbStrip.querySelector('.thumb.active');
+    if (active) active.scrollIntoView({ block:'nearest', inline:'nearest' });
+    pageImg.classList.remove('fade');
+  }, 180);
+}
+
+btnPrev.addEventListener('click', () => goTo(currentPage - 1));
+btnNext.addEventListener('click', () => goTo(currentPage + 1));
+btnPrev.disabled = true;
+
+// keyboard navigation when flipbook is in view
+document.addEventListener('keydown', e => {
+  const rect = document.getElementById('flipbook-wrap').getBoundingClientRect();
+  if (rect.top < window.innerHeight && rect.bottom > 0) {
+    if (e.key === 'ArrowRight') goTo(currentPage + 1);
+    if (e.key === 'ArrowLeft')  goTo(currentPage - 1);
+  }
+});
+</script>
 </body>
 </html>
