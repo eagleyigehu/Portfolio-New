@@ -305,6 +305,13 @@
     transition: opacity 0.3s ease, transform 0.4s ease;
     z-index: 0;
   }
+  /* card 6: show full image without zoom */
+  .work-card.full-img::before {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-color: #c8d4e8;
+  }
   .work-card::after {
     content: '';
     position: absolute;
@@ -655,7 +662,7 @@
       <div class="work-card-title">Illustration Storybook</div>
       <div class="work-card-cat">Illustration</div>
     </a>
-    <a href="project-06.html" class="work-card" style="--card-bg: url('comic-01.jpg')">
+    <a href="project-06.html" class="work-card full-img" style="--card-bg: url('storybook-cover.png');">
       <div class="work-card-num">06</div>
       <div class="work-card-title">Illustration Storybook</div>
       <div class="work-card-cat">Cultural Extension · Print</div>
