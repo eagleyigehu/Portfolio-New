@@ -107,7 +107,12 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(157,195,204,0.5) 0%, rgba(219,221,215,0.45) 100%);
+    background: linear-gradient(
+      to right,
+      rgba(157,195,204,0.82) 0%,
+      rgba(157,195,204,0.65) 45%,
+      rgba(157,195,204,0.1) 100%
+    );
     z-index: 1;
   }
   .hero-map iframe {
@@ -125,11 +130,12 @@
   .hero-eyebrow {
     font-family: var(--mono);
     font-size: 0.72rem;
-    font-weight: 300;
+    font-weight: 400;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: #3a6068;
+    color: #2a4a52;
     margin-bottom: 1.2rem;
+    text-shadow: 0 1px 3px rgba(157,195,204,0.6);
   }
   .hero-title {
     font-family: var(--serif);
@@ -137,20 +143,22 @@
     font-weight: 400;
     line-height: 1.05;
     letter-spacing: -0.01em;
-    color: #1a1a18;
+    color: #0e1a1c;
     margin-bottom: 1.5rem;
+    text-shadow: 0 1px 6px rgba(157,195,204,0.5);
   }
   .hero-title em {
     font-style: italic;
-    color: #3a6068;
+    color: #2a5560;
   }
   .hero-desc {
     font-family: var(--serif);
     font-size: 1.15rem;
-    color: #3a3834;
+    color: #1a2a2e;
     max-width: 520px;
     line-height: 1.7;
     margin-bottom: 2.5rem;
+    text-shadow: 0 1px 4px rgba(157,195,204,0.5);
   }
   .hero-cta {
     display: inline-flex;
@@ -161,13 +169,13 @@
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #1a1a18;
+    color: #0e1a1c;
     text-decoration: none;
-    border-bottom: 1px solid #1a1a18;
+    border-bottom: 1px solid #0e1a1c;
     padding-bottom: 2px;
     transition: color 0.2s, border-color 0.2s;
   }
-  .hero-cta:hover { color: #3a6068; border-color: #3a6068; }
+  .hero-cta:hover { color: #2a5560; border-color: #2a5560; }
   .hero-cta svg { transition: transform 0.2s; }
   .hero-cta:hover svg { transform: translate(3px, -3px); }
 
@@ -647,10 +655,10 @@
       <div class="work-card-title">Illustration Storybook</div>
       <div class="work-card-cat">Illustration</div>
     </a>
-    <a href="project-00.html" class="work-card" style="--card-bg: url('0.png')">
+    <a href="project-06.html" class="work-card" style="--card-bg: url('comic-01.jpg')">
       <div class="work-card-num">06</div>
-      <div class="work-card-title">The Mythical Bird</div>
-      <div class="work-card-cat">Interactive Visual Novel</div>
+      <div class="work-card-title">Illustration Storybook</div>
+      <div class="work-card-cat">Cultural Extension · Print</div>
     </a>
   </div>
 </section>
