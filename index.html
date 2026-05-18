@@ -94,7 +94,7 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 8rem 2.5rem 4rem;
+    padding: 8rem 2.5rem 4rem 4rem;
     position: relative;
     overflow: hidden;
     background: transparent;
@@ -110,9 +110,10 @@
     inset: 0;
     background: linear-gradient(
       to right,
-      rgba(157,195,204,0.82) 0%,
-      rgba(157,195,204,0.65) 45%,
-      rgba(157,195,204,0.1) 100%
+      rgba(157,195,204,0.88) 0%,
+      rgba(157,195,204,0.72) 30%,
+      rgba(157,195,204,0.2) 55%,
+      rgba(157,195,204,0.0) 100%
     );
     z-index: 1;
     pointer-events: none;
@@ -592,8 +593,9 @@
     <p class="hero-eyebrow">Science Communication Designer</p>
     <h1 class="hero-title">Emma<br><em>Hu</em></h1>
     <p class="hero-desc">Visualizing biodiversity through GIS analysis and scientific illustration — bridging the gap between data and public understanding.</p>
-    <a href="https://eaglehu.cargo.site/full-portfolio" class="hero-cta" target="_blank" rel="noopener">
-      Full Portfolio
+    <a href="index2.html" class="hero-cta">
+      SkyWatch
+      <span style="font-family:var(--mono);font-size:0.6rem;letter-spacing:0.12em;opacity:0.7;font-weight:300;margin-left:0.3rem">GIS PLATFORM · FLOATING HABITAT</span>
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
         <path d="M2 12L12 2M12 2H6M12 2V8"/>
       </svg>
@@ -800,13 +802,19 @@
   var map = new mapboxgl.Map({
     container: 'hero-mapbox-gl',
     style: 'mapbox://styles/emmahu20060131/cmodwrtal000t01sl8df9h15b?fresh=true',
-    center: [123, 18],
+    center: [112, 18],
     zoom: 2.2,
     projection: 'globe',
-    interactive: false
+    interactive: false,
+    attributionControl: false
   });
 
+  // 隐藏 Mapbox logo 和版权信息
   map.on('load', function() {
+    var logo = document.querySelector('.mapboxgl-ctrl-logo');
+    if (logo) logo.style.display = 'none';
+    var attrib = document.querySelector('.mapboxgl-ctrl-attrib');
+    if (attrib) attrib.style.display = 'none';
     // ── Arc data ──
     var ARCS = [
       {f:[129.237,-2.901],t:[127.5,4.5],s:'spring'},{f:[127.5,4.5],t:[126.2,8.5],s:'spring'},
