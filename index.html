@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
 <style>
   :root {
     --ink: #1a1a18;
@@ -114,14 +115,13 @@
       rgba(157,195,204,0.1) 100%
     );
     z-index: 1;
+    pointer-events: none;
   }
-  .hero-map iframe {
+  #hero-mapbox-gl {
     width: 100%;
     height: 100%;
-    border: none;
-    pointer-events: none;
-    display: block;
   }
+
   .hero-content {
     position: relative;
     z-index: 1;
@@ -304,13 +304,6 @@
     opacity: 0.85;
     transition: opacity 0.3s ease, transform 0.4s ease;
     z-index: 0;
-  }
-  /* card 6: show full image without zoom */
-  .work-card.full-img::before {
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-color: #c8d4e8;
   }
   .work-card::after {
     content: '';
@@ -593,11 +586,7 @@
 <!-- HERO -->
 <section class="hero" id="home">
   <div class="hero-map">
-    <iframe
-      src="https://api.mapbox.com/styles/v1/emmahu20060131/cmodwrtal000t01sl8df9h15b.html?title=false&access_token=pk.eyJ1IjoiZW1tYWh1MjAwNjAxMzEiLCJhIjoiY21vNm8xMG5sMjN3djJxcWF5eXJqdTljdyJ9.3bLzesxIGFlguMHlKcPrRg&zoomwheel=false#2/7.17/122.27"
-      title="World map"
-      loading="lazy"
-    ></iframe>
+    <div id="hero-mapbox-gl"></div>
   </div>
   <div class="hero-content">
     <p class="hero-eyebrow">Science Communication Designer</p>
@@ -662,7 +651,7 @@
       <div class="work-card-title">Illustration Storybook</div>
       <div class="work-card-cat">Illustration</div>
     </a>
-    <a href="project-06.html" class="work-card full-img" style="--card-bg: url('storybook-cover.png');">
+    <a href="project-06.html" class="work-card" style="--card-bg: url('comic-01.jpg')">
       <div class="work-card-num">06</div>
       <div class="work-card-title">Illustration Storybook</div>
       <div class="work-card-cat">Cultural Extension · Print</div>
@@ -803,5 +792,133 @@
   <span>Science Communication Designer</span>
 </footer>
 
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+<script>
+(function() {
+  mapboxgl.accessToken = 'pk.eyJ1IjoiZW1tYWh1MjAwNjAxMzEiLCJhIjoiY21vNm8xMG5sMjN3djJxcWF5eXJqdTljdyJ9.3bLzesxIGFlguMHlKcPrRg';
+
+  var map = new mapboxgl.Map({
+    container: 'hero-mapbox-gl',
+    style: 'mapbox://styles/emmahu20060131/cmodwrtal000t01sl8df9h15b?fresh=true',
+    center: [123, 18],
+    zoom: 2.4,
+    projection: 'globe',
+    interactive: false
+  });
+
+  map.on('load', function() {
+    // ── Arc data ──
+    var ARCS = [
+      {f:[129.237,-2.901],t:[127.5,4.5],s:'spring'},{f:[127.5,4.5],t:[126.2,8.5],s:'spring'},
+      {f:[126.2,8.5],t:[125.8,13.5],s:'spring'},{f:[125.8,13.5],t:[124.5,18],s:'spring'},
+      {f:[124.5,18],t:[122.8,22],s:'spring'},{f:[122.8,22],t:[121.2,25.2],s:'spring'},
+      {f:[121.2,25.2],t:[120.3,26.5],s:'spring'},{f:[120.3,26.5],t:[120.2,28],s:'spring'},
+      {f:[120.2,28],t:[121.8,30.9],s:'spring'},{f:[121.8,30.9],t:[121.5,32.2],s:'spring'},
+      {f:[121.5,32.2],t:[119.5,35.3],s:'spring'},{f:[119.5,35.3],t:[126.5,37.2],s:'spring'},
+      {f:[126.5,37.2],t:[119.5,35.3],s:'fall'},{f:[119.5,35.3],t:[121.5,32.2],s:'fall'},
+      {f:[121.5,32.2],t:[121.8,30.9],s:'fall'},{f:[121.8,30.9],t:[120.1,27.8],s:'fall'},
+      {f:[120.1,27.8],t:[119.4,25.8],s:'fall'},{f:[119.4,25.8],t:[119.2,23.5],s:'fall'},
+      {f:[119.2,23.5],t:[119.5,20],s:'fall'},{f:[119.5,20],t:[119.8,16],s:'fall'},
+      {f:[119.8,16],t:[120.5,13.5],s:'fall'},{f:[120.5,13.5],t:[121.8,9.5],s:'fall'},
+      {f:[121.8,9.5],t:[123.8,5],s:'fall'},{f:[123.8,5],t:[126.5,1.5],s:'fall'},
+      {f:[126.5,1.5],t:[127.8,-0.5],s:'fall'},{f:[127.8,-0.5],t:[128.2,-4],s:'fall'},
+    ];
+
+    function ap(a, b) {
+      var m = [(a[0]+b[0])/2, (a[1]+b[1])/2+1.5], r = [];
+      for (var i = 0; i <= 40; i++) {
+        var t = i/40;
+        r.push([(1-t)*(1-t)*a[0]+2*(1-t)*t*m[0]+t*t*b[0], (1-t)*(1-t)*a[1]+2*(1-t)*t*m[1]+t*t*b[1]]);
+      }
+      return r;
+    }
+
+    map.addSource('arcs-src', {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: ARCS.map(function(a, i) {
+          return {type:'Feature', geometry:{type:'LineString', coordinates:ap(a.f,a.t)}, properties:{s:a.s,id:i}};
+        })
+      }
+    });
+
+    map.addLayer({id:'arcs-glow', type:'line', source:'arcs-src',
+      paint:{'line-color':['match',['get','s'],'spring','#7aaebb','#c49a52'],'line-width':4,'line-opacity':.1,'line-blur':3},
+      layout:{'line-cap':'round','line-join':'round'}});
+    map.addLayer({id:'arcs-fall', type:'line', source:'arcs-src', filter:['==',['get','s'],'fall'],
+      paint:{'line-color':'#c49a52','line-width':1.2,'line-opacity':.7,'line-dasharray':[0,4,3]},
+      layout:{'line-cap':'round','line-join':'round'}});
+    map.addLayer({id:'arcs-spring', type:'line', source:'arcs-src', filter:['==',['get','s'],'spring'],
+      paint:{'line-color':'#5a9aaa','line-width':1,'line-opacity':.75,'line-dasharray':[0,4,3]},
+      layout:{'line-cap':'round','line-join':'round'}});
+
+    // Animated dash
+    var step = 0;
+    var seq = [[0,4,3],[0.5,4,2.5],[1,4,2],[1.5,4,1.5],[2,4,1],[2.5,4,.5],[3,4,0],[0,3,1,3]];
+    (function tick() {
+      step = (step+1) % seq.length;
+      if (map.getLayer('arcs-spring')) map.setPaintProperty('arcs-spring','line-dasharray',seq[step]);
+      if (map.getLayer('arcs-fall')) map.setPaintProperty('arcs-fall','line-dasharray',seq[step]);
+      setTimeout(tick, 120);
+    })();
+
+    // ── Bird markers — directional images ──
+    var SP = [[129.237,-2.901],[127.5,4.5],[126.2,8.5],[125.8,13.5],[124.5,18],[122.8,22],[121.2,25.2],[120.3,26.5],[120.2,28],[121.8,30.9],[121.5,32.2],[119.5,35.3],[126.5,37.2]];
+    var FP = [[126.5,37.2],[119.5,35.3],[121.5,32.2],[121.8,30.9],[120.1,27.8],[119.4,25.8],[119.2,23.5],[119.5,20],[119.8,16],[120.5,13.5],[121.8,9.5],[123.8,5],[126.5,1.5],[127.8,-0.5],[128.2,-4]];
+
+    // 黑底白鸟图用 screen blend mode，黑色变透明，白鸟保留
+    var BIRD_STYLE = 'width:100%;height:100%;object-fit:contain;mix-blend-mode:screen;';
+
+    function mkBirdEl(src) {
+      var el = document.createElement('div');
+      el.style.cssText = 'width:64px;height:64px;pointer-events:none;will-change:transform;';
+      var img = document.createElement('img');
+      img.src = src;
+      img.style.cssText = BIRD_STYLE;
+      el.appendChild(img);
+      return el;
+    }
+
+    // spring = 南到北；fall = 北到南
+    var sEl = mkBirdEl('bird南到北.png'), fEl = mkBirdEl('bird北到南.png');
+    var sMk = new mapboxgl.Marker({element: sEl, anchor:'center'}).setLngLat(SP[0]).addTo(map);
+    var fMk = new mapboxgl.Marker({element: fEl, anchor:'center'}).setLngLat(FP[Math.floor(FP.length/2)]).addTo(map);
+
+    var SEG_MS = 3000, TICK = 16;
+    var sT = 0, sF = 0, fT = Math.floor(FP.length/2), fF = 0;
+    var sHeading = 0, fHeading = 0;
+
+    function lerpAngle(a, b, t) {
+      var d = ((b-a+540)%360)-180;
+      return a + d*t;
+    }
+
+    setInterval(function() {
+      sF += TICK/SEG_MS;
+      if (sF >= 1) { sF = 0; sT = (sT+1)%(SP.length-1); }
+      var sa = SP[sT], sb = SP[(sT+1)%SP.length];
+      var t = sF < .5 ? 2*sF*sF : -1+(4-2*sF)*sF;
+      sMk.setLngLat([sa[0]+(sb[0]-sa[0])*t, sa[1]+(sb[1]-sa[1])*t]);
+      var ahead = SP[Math.min(sT+3, SP.length-1)];
+      var target = Math.atan2(ahead[1]-sa[1], ahead[0]-sa[0])*180/Math.PI;
+      sHeading = lerpAngle(sHeading, target, 0.06);
+      sEl.style.transform = 'rotate('+sHeading+'deg)';
+    }, TICK);
+
+    setInterval(function() {
+      fF += TICK/SEG_MS;
+      if (fF >= 1) { fF = 0; fT = (fT+1)%(FP.length-1); }
+      var fa = FP[fT], fb = FP[(fT+1)%FP.length];
+      var t = fF < .5 ? 2*fF*fF : -1+(4-2*fF)*fF;
+      fMk.setLngLat([fa[0]+(fb[0]-fa[0])*t, fa[1]+(fb[1]-fa[1])*t]);
+      var ahead = FP[Math.min(fT+3, FP.length-1)];
+      var target = Math.atan2(ahead[1]-fa[1], ahead[0]-fa[0])*180/Math.PI-180;
+      fHeading = lerpAngle(fHeading, target, 0.06);
+      fEl.style.transform = 'rotate('+fHeading+'deg)';
+    }, TICK);
+  });
+})();
+</script>
 </body>
 </html>
