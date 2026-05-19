@@ -8,565 +8,255 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #e8e4dc; --ink-2: #9db4bb; --accent: #7aaebb;
+  --rule: rgba(157,195,204,0.18);
+  --serif: 'EB Garamond', Georgia, serif;
+  --mono: 'DM Mono', monospace;
+  --sans: 'Inter', sans-serif;
+  --bg: #0d1821;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.6; min-height: 100vh; overflow-x: hidden; }
 
-  :root {
-    --ink: #e8e4dc;
-    --ink-2: #9db4bb;
-    --accent: #7aaebb;
-    --rule: rgba(157,195,204,0.18);
-    --serif: 'EB Garamond', Georgia, serif;
-    --mono: 'DM Mono', monospace;
-    --sans: 'Inter', sans-serif;
-    --bg: #0d1821;
-    --card-bg: #111d28;
-    --star-color: rgba(200,220,230,0.5);
-  }
+.starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.starfield canvas { width: 100%; height: 100%; }
+.atmos { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.atmos::before { content:''; position:absolute; top:-20%; right:-10%; width:60vw; height:60vw; background:radial-gradient(circle,rgba(26,60,90,.45) 0%,transparent 70%); border-radius:50%; }
+.atmos::after  { content:''; position:absolute; bottom:-10%; left:-5%; width:50vw; height:50vw; background:radial-gradient(circle,rgba(15,40,70,.3) 0%,transparent 70%); border-radius:50%; }
 
-  html { scroll-behavior: smooth; }
+nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:1.2rem 2.5rem; background:rgba(13,24,33,.8); backdrop-filter:blur(12px); border-bottom:.5px solid var(--rule); }
+.nav-brand { font-family:var(--serif); font-size:1rem; color:var(--ink); text-decoration:none; }
+.nav-back { font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-2); text-decoration:none; display:flex; align-items:center; gap:.4rem; transition:color .2s; }
+.nav-back:hover { color:var(--accent); }
 
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--sans);
-    font-size: 16px;
-    line-height: 1.6;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+main { position:relative; z-index:10; padding-top:6rem; }
 
-  /* ── STAR FIELD ── */
-  .starfield {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-  }
-  .starfield canvas { width: 100%; height: 100%; }
+.page-header { padding:4rem 2.5rem 3rem; max-width:900px; margin:0 auto; }
+.page-eyebrow { font-family:var(--mono); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:1.2rem; opacity:.8; }
+.page-title { font-family:var(--serif); font-size:clamp(2.8rem,6vw,5rem); font-weight:400; line-height:1.05; color:var(--ink); }
+.page-title em { font-style:italic; color:var(--ink-2); }
+.page-desc { font-family:var(--serif); font-size:1.1rem; color:var(--ink-2); line-height:1.8; max-width:600px; margin-top:1.5rem; font-style:italic; }
+.page-meta { display:flex; gap:2rem; margin-top:2rem; flex-wrap:wrap; }
+.meta-item { display:flex; flex-direction:column; gap:.2rem; }
+.meta-label { font-family:var(--mono); font-size:.58rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); opacity:.7; }
+.meta-val { font-family:var(--mono); font-size:.78rem; color:var(--ink-2); }
 
-  /* Atmospheric glow blobs */
-  .atmos {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-  }
-  .atmos::before {
-    content: '';
-    position: absolute;
-    top: -20%;
-    right: -10%;
-    width: 60vw;
-    height: 60vw;
-    background: radial-gradient(circle, rgba(26,60,90,0.45) 0%, transparent 70%);
-    border-radius: 50%;
-  }
-  .atmos::after {
-    content: '';
-    position: absolute;
-    bottom: -10%;
-    left: -5%;
-    width: 50vw;
-    height: 50vw;
-    background: radial-gradient(circle, rgba(15,40,70,0.3) 0%, transparent 70%);
-    border-radius: 50%;
-  }
+.divider { height:.5px; background:var(--rule); margin:0 2.5rem; }
 
-  /* ── NAV ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.2rem 2.5rem;
-    background: rgba(13,24,33,0.75);
-    backdrop-filter: blur(12px);
-    border-bottom: 0.5px solid var(--rule);
-  }
-  .nav-brand {
-    font-family: var(--serif);
-    font-size: 1rem;
-    color: var(--ink);
-    text-decoration: none;
-    letter-spacing: 0.01em;
-  }
-  .nav-back {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-2);
-    text-decoration: none;
-    transition: color 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-  .nav-back:hover { color: var(--accent); }
+.section-wrap { padding:4rem 2.5rem; max-width:1200px; margin:0 auto; }
+.section-eyebrow { font-family:var(--mono); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); opacity:.7; margin-bottom:.5rem; }
+.section-title { font-family:var(--serif); font-size:1.5rem; font-weight:400; font-style:italic; color:var(--ink); margin-bottom:2.5rem; }
 
-  /* ── MAIN CONTENT ── */
-  main {
-    position: relative;
-    z-index: 10;
-    padding-top: 6rem;
-  }
+/* ── BOOK LAYOUT ── */
+.book-layout { display:grid; grid-template-columns:200px 1fr; gap:2.5rem; align-items:start; }
 
-  /* ── HERO HEADER ── */
-  .page-header {
-    padding: 4rem 2.5rem 3rem;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-  .page-eyebrow {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 1.2rem;
-    opacity: 0.8;
-  }
-  .page-title {
-    font-family: var(--serif);
-    font-size: clamp(2.8rem, 6vw, 5rem);
-    font-weight: 400;
-    line-height: 1.05;
-    color: var(--ink);
-    margin-bottom: 0.3rem;
-  }
-  .page-title em {
-    font-style: italic;
-    color: var(--ink-2);
-  }
-  .page-desc {
-    font-family: var(--serif);
-    font-size: 1.1rem;
-    color: var(--ink-2);
-    line-height: 1.8;
-    max-width: 600px;
-    margin-top: 1.5rem;
-    font-style: italic;
-  }
-  .page-meta {
-    display: flex;
-    gap: 2rem;
-    margin-top: 2rem;
-    flex-wrap: wrap;
-  }
-  .meta-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-  }
-  .meta-label {
-    font-family: var(--mono);
-    font-size: 0.58rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent);
-    opacity: 0.7;
-  }
-  .meta-val {
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    color: var(--ink-2);
-  }
+.book-cover-col { position:sticky; top:5.5rem; }
+.book-cover-label { font-family:var(--mono); font-size:.55rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); opacity:.6; margin-bottom:.6rem; }
+.book-cover-img { width:100%; border-radius:3px; box-shadow:6px 6px 28px rgba(0,0,0,.6),-2px 0 10px rgba(0,0,0,.3); display:block; border:.5px solid var(--rule); }
+.book-cover-title { font-family:var(--serif); font-size:.85rem; font-style:italic; color:var(--ink-2); margin-top:.8rem; line-height:1.45; }
 
-  .page-divider {
-    height: 0.5px;
-    background: var(--rule);
-    margin: 0 2.5rem;
-  }
+/* Flipbook reader */
+.reader-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:.8rem; }
+.reader-chapter { font-family:var(--mono); font-size:.6rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-2); opacity:.6; }
+.flip-counter { font-family:var(--mono); font-size:.65rem; color:var(--ink-2); letter-spacing:.06em; }
 
-  /* ── SECTION LABELS ── */
-  .section-wrap {
-    padding: 4rem 2.5rem;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-  .section-eyebrow {
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--accent);
-    opacity: 0.7;
-    margin-bottom: 0.6rem;
-  }
-  .section-title {
-    font-family: var(--serif);
-    font-size: 1.5rem;
-    font-weight: 400;
-    font-style: italic;
-    color: var(--ink);
-    margin-bottom: 2.5rem;
-  }
+.spread-viewer { background:rgba(8,14,22,.8); border:.5px solid var(--rule); border-radius:3px; overflow:hidden; }
 
-  /* ── FLIPBOOK ── */
-  .flipbook-container {
-    background: rgba(10,18,28,0.6);
-    border: 0.5px solid var(--rule);
-    border-radius: 4px;
-    padding: 2rem 2rem 1.5rem;
-    backdrop-filter: blur(8px);
-    position: relative;
-  }
+.spread-slot { display:none; width:100%; }
+.spread-slot.active { display:block; }
+.spread-slot img { width:100%; max-height:76vh; object-fit:contain; display:block; }
 
-  .flipbook-viewer {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 3/4;
-    max-height: 80vh;
-    overflow: hidden;
-    border-radius: 2px;
-    background: #0a0f16;
-  }
-  .flipbook-viewer img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    opacity: 0;
-    transition: opacity 0.35s ease;
-    user-select: none;
-  }
-  .flipbook-viewer img.active { opacity: 1; }
+.reader-controls { display:flex; align-items:center; gap:0; margin-top:.9rem; }
+.flip-btn { width:48px; height:48px; border:1.5px solid rgba(157,195,204,.3); border-radius:50%; background:rgba(13,24,33,.85); color:var(--ink); cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .18s; }
+.flip-btn:hover:not(:disabled) { border-color:var(--accent); background:rgba(122,174,187,.15); color:var(--accent); transform:scale(1.08); }
+.flip-btn:disabled { opacity:.2; cursor:default; }
+.flip-btn svg { width:16px; height:16px; }
+.flip-progress { flex:1; padding:0 1.2rem; }
+.flip-track { width:100%; height:2px; background:rgba(157,195,204,.1); border-radius:1px; cursor:pointer; }
+.flip-fill { height:100%; background:var(--accent); border-radius:1px; transition:width .25s ease; }
 
-  /* Nav controls */
-  .flipbook-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    margin-top: 1.2rem;
-    position: relative;
-  }
+/* ── PART 3 AUTO-SCROLL ── */
+.scroll-reader { border:.5px solid var(--rule); border-radius:3px; background:rgba(8,14,22,.8); }
+.scroll-clip { position:relative; height:55vh; overflow:hidden; }
+.scroll-strip-wrap { position:absolute; top:0; left:0; right:0; bottom:0; cursor:grab; user-select:none; }
+.scroll-strip-wrap:active { cursor:grabbing; }
+.scroll-strip { display:flex; flex-direction:row; height:100%; position:absolute; top:0; left:0; }
+.scroll-strip img { height:55vh; width:auto; display:block; flex-shrink:0; }
+.scroll-controls { display:flex; align-items:center; justify-content:space-between; padding:.85rem 1.2rem; border-top:.5px solid var(--rule); gap:1rem; flex-wrap:wrap; }
+.scroll-label { font-family:var(--mono); font-size:.6rem; color:var(--ink-2); opacity:.65; letter-spacing:.05em; }
+.scroll-speed { display:flex; align-items:center; gap:.5rem; }
+.speed-btn { font-family:var(--mono); font-size:.58rem; color:var(--ink-2); background:none; border:1px solid var(--rule); border-radius:4px; padding:.15rem .55rem; cursor:pointer; transition:all .15s; }
+.speed-btn:hover,.speed-btn.active { border-color:var(--accent); color:var(--accent); }
+.scroll-toggle { font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); background:none; border:1px solid rgba(122,174,187,.35); border-radius:20px; padding:.28rem .9rem; cursor:pointer; transition:all .18s; }
+.scroll-toggle:hover { background:rgba(122,174,187,.12); }
 
-  .flip-btn {
-    width: 52px;
-    height: 52px;
-    border: 1.5px solid rgba(157,195,204,0.35);
-    border-radius: 50%;
-    background: rgba(13,24,33,0.8);
-    color: var(--ink);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    flex-shrink: 0;
-  }
-  .flip-btn:hover:not(:disabled) {
-    border-color: var(--accent);
-    background: rgba(122,174,187,0.15);
-    color: var(--accent);
-    transform: scale(1.08);
-  }
-  .flip-btn:disabled { opacity: 0.25; cursor: default; }
-  .flip-btn svg { width: 18px; height: 18px; }
+/* Process gallery */
+.process-intro { font-family:var(--serif); font-size:1rem; font-style:italic; color:var(--ink-2); line-height:1.75; max-width:580px; margin-bottom:2.5rem; }
+.gallery-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; }
+.gallery-item { overflow:hidden; border-radius:3px; border:.5px solid var(--rule); background:#0a1018; cursor:pointer; transition:border-color .2s; }
+.gallery-item:hover { border-color:rgba(157,195,204,.4); }
+.gallery-item img { width:100%; height:230px; object-fit:cover; display:block; transition:transform .4s; }
+.gallery-item:hover img { transform:scale(1.03); }
+.gallery-item-cap { padding:.7rem 1rem; font-family:var(--mono); font-size:.6rem; color:var(--ink-2); letter-spacing:.05em; border-top:.5px solid var(--rule); }
 
-  .flip-progress {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0 1.5rem;
-  }
-  .flip-counter {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    color: var(--ink-2);
-    letter-spacing: 0.08em;
-  }
-  .flip-track {
-    width: 100%;
-    max-width: 200px;
-    height: 2px;
-    background: rgba(157,195,204,0.12);
-    border-radius: 1px;
-    position: relative;
-    cursor: pointer;
-  }
-  .flip-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 1px;
-    transition: width 0.3s ease;
-  }
+.lightbox { position:fixed; inset:0; z-index:200; background:rgba(7,13,20,.95); backdrop-filter:blur(16px); display:none; align-items:center; justify-content:center; cursor:zoom-out; }
+.lightbox.open { display:flex; }
+.lightbox img { max-width:90vw; max-height:90vh; object-fit:contain; cursor:default; }
+.lightbox-close { position:absolute; top:1.5rem; right:1.5rem; width:40px; height:40px; border:1px solid rgba(157,195,204,.3); border-radius:50%; background:none; color:var(--ink-2); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1.1rem; transition:all .2s; }
+.lightbox-close:hover { border-color:var(--accent); color:var(--accent); }
 
-  /* chapter label */
-  .chapter-label {
-    font-family: var(--mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent);
-    opacity: 0.6;
-    margin-bottom: 1rem;
-  }
+.page-footer { position:relative; z-index:10; border-top:.5px solid var(--rule); padding:2rem 2.5rem; display:flex; align-items:center; justify-content:space-between; margin-top:5rem; }
+.footer-back { font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-2); text-decoration:none; display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+.footer-back:hover { color:var(--accent); }
+.footer-copy { font-family:var(--mono); font-size:.6rem; color:rgba(157,195,204,.3); }
 
-  /* ── PROCESS GALLERY ── */
-  .process-intro {
-    font-family: var(--serif);
-    font-size: 1rem;
-    font-style: italic;
-    color: var(--ink-2);
-    line-height: 1.75;
-    max-width: 580px;
-    margin-bottom: 2.5rem;
-  }
-
-  .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.2rem;
-  }
-  .gallery-item {
-    position: relative;
-    overflow: hidden;
-    border-radius: 3px;
-    border: 0.5px solid var(--rule);
-    background: #0a1018;
-    cursor: pointer;
-    transition: border-color 0.2s;
-  }
-  .gallery-item:hover { border-color: rgba(157,195,204,0.4); }
-  .gallery-item img {
-    width: 100%;
-    height: 260px;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.4s ease;
-  }
-  .gallery-item:hover img { transform: scale(1.03); }
-  .gallery-item-cap {
-    padding: 0.8rem 1rem;
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    color: var(--ink-2);
-    letter-spacing: 0.06em;
-    border-top: 0.5px solid var(--rule);
-  }
-
-  /* Lightbox */
-  .lightbox {
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    background: rgba(7,13,20,0.94);
-    backdrop-filter: blur(16px);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    cursor: zoom-out;
-  }
-  .lightbox.open { display: flex; }
-  .lightbox img {
-    max-width: 90vw;
-    max-height: 90vh;
-    object-fit: contain;
-    border-radius: 2px;
-    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
-    cursor: default;
-  }
-  .lightbox-close {
-    position: absolute;
-    top: 1.5rem; right: 1.5rem;
-    width: 40px; height: 40px;
-    border: 1px solid rgba(157,195,204,0.3);
-    border-radius: 50%;
-    background: none;
-    color: var(--ink-2);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem;
-    transition: all 0.2s;
-  }
-  .lightbox-close:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* ── FOOTER ── */
-  .page-footer {
-    position: relative;
-    z-index: 10;
-    border-top: 0.5px solid var(--rule);
-    padding: 2rem 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 4rem;
-  }
-  .footer-back {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-2);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: color 0.2s;
-  }
-  .footer-back:hover { color: var(--accent); }
-  .footer-copy {
-    font-family: var(--mono);
-    font-size: 0.6rem;
-    color: rgba(157,195,204,0.35);
-    letter-spacing: 0.06em;
-  }
-
-  @media (max-width: 640px) {
-    .page-header { padding: 2.5rem 1.2rem 2rem; }
-    .section-wrap { padding: 2.5rem 1.2rem; }
-    .flipbook-container { padding: 1rem 1rem 1rem; }
-    .gallery-grid { grid-template-columns: 1fr 1fr; gap: 0.8rem; }
-    .gallery-item img { height: 180px; }
-    .page-footer { flex-direction: column; gap: 0.8rem; }
-  }
+@media(max-width:720px){
+  .book-layout { grid-template-columns:1fr; }
+  .book-cover-col { position:static; display:flex; align-items:center; gap:1rem; }
+  .book-cover-img { width:90px; }
+}
 </style>
 </head>
 <body>
 
-<!-- Starfield background -->
 <div class="starfield"><canvas id="stars"></canvas></div>
 <div class="atmos"></div>
 
-<!-- Nav -->
 <nav>
   <a href="index.html" class="nav-brand">Emma Hu</a>
   <a href="index.html" class="nav-back">
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
-      <path d="M10 2L4 7l6 5"/>
-    </svg>
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 2L4 7l6 5"/></svg>
     Back to work
   </a>
 </nav>
 
 <main>
-  <!-- Header -->
   <div class="page-header">
     <div class="page-eyebrow">05 — Illustration · Storybook</div>
     <h1 class="page-title">Why <em>Fantasize?</em></h1>
     <p class="page-desc">A three-part illustrated storybook exploring migration, memory, and the creatures we carry with us.</p>
     <div class="page-meta">
-      <div class="meta-item">
-        <span class="meta-label">Medium</span>
-        <span class="meta-val">Pastel · Collage · Ink</span>
-      </div>
-      <div class="meta-item">
-        <span class="meta-label">Parts</span>
-        <span class="meta-val">3 Chapters</span>
-      </div>
-      <div class="meta-item">
-        <span class="meta-label">Type</span>
-        <span class="meta-val">Illustrated Book</span>
-      </div>
+      <div class="meta-item"><span class="meta-label">Medium</span><span class="meta-val">Pastel · Collage · Ink</span></div>
+      <div class="meta-item"><span class="meta-label">Parts</span><span class="meta-val">3 Chapters</span></div>
+      <div class="meta-item"><span class="meta-label">Type</span><span class="meta-val">Illustrated Book</span></div>
     </div>
   </div>
 
-  <div class="page-divider"></div>
+  <div class="divider"></div>
 
-  <!-- ── PART 1 ── -->
+  <!-- PART 1 -->
   <div class="section-wrap">
     <div class="section-eyebrow">Chapter 01</div>
-    <h2 class="section-title">Running Away with the Raven</h2>
-
-    <div class="flipbook-container" id="book1">
-      <div class="chapter-label">Part 1 · 12 pages</div>
-      <div class="flipbook-viewer" id="viewer1">
-        <!-- images injected by JS -->
+    <h2 class="section-title">Foresee Obstacles</h2>
+    <div class="book-layout">
+      <div class="book-cover-col">
+        <div class="book-cover-label">Cover</div>
+        <img class="book-cover-img" id="cover1" src="" alt="Part 1 Cover">
+        <div class="book-cover-title">Foresee<br>Obstacles</div>
       </div>
-      <div class="flipbook-controls">
-        <button class="flip-btn" id="prev1" aria-label="Previous page">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 4l-6 6 6 6"/></svg>
-        </button>
-        <div class="flip-progress">
-          <div class="flip-counter" id="counter1">1 / 12</div>
-          <div class="flip-track" id="track1" title="Click to seek">
-            <div class="flip-fill" id="fill1" style="width:8.33%"></div>
-          </div>
+      <div class="book-reader-col">
+        <div class="reader-header">
+          <span class="reader-chapter">Part 1</span>
+          <span class="flip-counter" id="counter1">1 / 5</span>
         </div>
-        <button class="flip-btn" id="next1" aria-label="Next page">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4l6 6-6 6"/></svg>
-        </button>
+        <div class="spread-viewer" id="viewer1"></div>
+        <div class="reader-controls">
+          <button class="flip-btn" id="prev1" disabled>
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 4l-6 6 6 6"/></svg>
+          </button>
+          <div class="flip-progress">
+            <div class="flip-track" id="track1"><div class="flip-fill" id="fill1" style="width:20%"></div></div>
+          </div>
+          <button class="flip-btn" id="next1">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4l6 6-6 6"/></svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="page-divider"></div>
+  <div class="divider"></div>
 
-  <!-- ── PART 2 ── -->
+  <!-- PART 2 -->
   <div class="section-wrap">
     <div class="section-eyebrow">Chapter 02</div>
-    <h2 class="section-title">Chapter 2: Running Away with the Raven</h2>
-
-    <div class="flipbook-container" id="book2">
-      <div class="chapter-label">Part 2 · 10 pages</div>
-      <div class="flipbook-viewer" id="viewer2"></div>
-      <div class="flipbook-controls">
-        <button class="flip-btn" id="prev2" aria-label="Previous page">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 4l-6 6 6 6"/></svg>
-        </button>
-        <div class="flip-progress">
-          <div class="flip-counter" id="counter2">1 / 10</div>
-          <div class="flip-track" id="track2" title="Click to seek">
-            <div class="flip-fill" id="fill2" style="width:10%"></div>
-          </div>
+    <h2 class="section-title">Running Away with the Raven</h2>
+    <div class="book-layout">
+      <div class="book-cover-col">
+        <div class="book-cover-label">Cover</div>
+        <img class="book-cover-img" id="cover2" src="" alt="Part 2 Cover">
+        <div class="book-cover-title">Running Away<br>with the Raven</div>
+      </div>
+      <div class="book-reader-col">
+        <div class="reader-header">
+          <span class="reader-chapter">Part 2</span>
+          <span class="flip-counter" id="counter2">1 / 4</span>
         </div>
-        <button class="flip-btn" id="next2" aria-label="Next page">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4l6 6-6 6"/></svg>
-        </button>
+        <div class="spread-viewer" id="viewer2"></div>
+        <div class="reader-controls">
+          <button class="flip-btn" id="prev2" disabled>
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 4l-6 6 6 6"/></svg>
+          </button>
+          <div class="flip-progress">
+            <div class="flip-track" id="track2"><div class="flip-fill" id="fill2" style="width:25%"></div></div>
+          </div>
+          <button class="flip-btn" id="next2">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4l6 6-6 6"/></svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="page-divider"></div>
+  <div class="divider"></div>
 
-  <!-- ── PART 3 ── -->
+  <!-- PART 3 -->
   <div class="section-wrap">
     <div class="section-eyebrow">Chapter 03</div>
-    <h2 class="section-title">The Final Migration</h2>
-
-    <div class="flipbook-container" id="book3">
-      <div class="chapter-label">Part 3 · 30 pages</div>
-      <div class="flipbook-viewer" id="viewer3"></div>
-      <div class="flipbook-controls">
-        <button class="flip-btn" id="prev3" aria-label="Previous page">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 4l-6 6 6 6"/></svg>
-        </button>
-        <div class="flip-progress">
-          <div class="flip-counter" id="counter3">1 / 30</div>
-          <div class="flip-track" id="track3" title="Click to seek">
-            <div class="flip-fill" id="fill3" style="width:3.33%"></div>
+    <h2 class="section-title">Why Fantasize?</h2>
+    <div class="book-layout">
+      <div class="book-cover-col">
+        <div class="book-cover-label">Cover</div>
+        <img class="book-cover-img" id="cover3" src="" alt="Part 3 Cover">
+        <div class="book-cover-title">Why<br>Fantasize?</div>
+      </div>
+      <div class="book-reader-col">
+        <div class="reader-header">
+          <span class="reader-chapter">Part 3 · 14 spreads · auto-scroll →</span>
+        </div>
+        <div class="scroll-reader">
+          <div class="scroll-clip" id="scrollClip">
+            <div class="scroll-strip-wrap" id="stripWrap">
+              <div class="scroll-strip" id="strip3"></div>
+            </div>
+          </div>
+          <div class="scroll-controls">
+            <span class="scroll-label" id="scrollLabel">Hover to pause</span>
+            <div class="scroll-speed">
+              <button class="speed-btn" data-speed="0.4">Slow</button>
+              <button class="speed-btn active" data-speed="0.9">Normal</button>
+              <button class="speed-btn" data-speed="1.8">Fast</button>
+            </div>
+            <button class="scroll-toggle" id="scrollToggle">⏸ Pause</button>
           </div>
         </div>
-        <button class="flip-btn" id="next3" aria-label="Next page">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4l6 6-6 6"/></svg>
-        </button>
       </div>
     </div>
   </div>
 
-  <div class="page-divider"></div>
+  <div class="divider"></div>
 
-  <!-- ── PROCESS & INSPIRATION ── -->
+  <!-- PROCESS -->
   <div class="section-wrap">
     <div class="section-eyebrow">Process & Inspiration</div>
     <h2 class="section-title">Research, Sketchbooks & Sources</h2>
-    <p class="process-intro">Behind the finished pages — field sketches, research journals, and the visual references that shaped the narrative. From New Zealand wildlife encounters to natural history museum visits, each spread was grounded in direct observation.</p>
-
-    <div class="gallery-grid" id="processGallery">
-      <!-- images injected by JS -->
-    </div>
+    <p class="process-intro">Behind the finished pages — field sketches, research journals, and the visual references that shaped the narrative.</p>
+    <div class="gallery-grid" id="processGallery"></div>
   </div>
 </main>
 
-<!-- Lightbox -->
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" id="lbClose">✕</button>
   <img id="lbImg" src="" alt="">
@@ -574,163 +264,169 @@
 
 <footer class="page-footer">
   <a href="index.html" class="footer-back">
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
-      <path d="M10 2L4 7l6 5"/>
-    </svg>
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 2L4 7l6 5"/></svg>
     Back to portfolio
   </a>
   <span class="footer-copy">Emma Hu © 2026</span>
 </footer>
 
+<script src="data/part1.js"></script>
+<script src="data/part2.js"></script>
+<script src="data/part3.js"></script>
+<script src="data/process.js"></script>
 <script>
 // ── STARFIELD ──
-(function() {
-  const canvas = document.getElementById('stars');
-  const ctx = canvas.getContext('2d');
-  let stars = [];
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  function initStars() {
-    stars = [];
-    const count = Math.floor((canvas.width * canvas.height) / 4000);
-    for (let i = 0; i < count; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 1.2 + 0.2,
-        o: Math.random() * 0.6 + 0.1,
-        speed: Math.random() * 0.0003 + 0.0001,
-        phase: Math.random() * Math.PI * 2
-      });
-    }
-  }
-  let t = 0;
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    t += 0.016;
-    stars.forEach(s => {
-      const opacity = s.o * (0.6 + 0.4 * Math.sin(t * s.speed * 100 + s.phase));
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(200,220,235,${opacity})`;
-      ctx.fill();
-    });
-    requestAnimationFrame(draw);
-  }
-  resize();
-  initStars();
-  draw();
-  window.addEventListener('resize', () => { resize(); initStars(); });
+(function(){
+  const cv=document.getElementById('stars'),ctx=cv.getContext('2d');let stars=[],t=0;
+  function resize(){cv.width=innerWidth;cv.height=innerHeight;}
+  function init(){stars=[];const n=Math.floor(cv.width*cv.height/4000);for(let i=0;i<n;i++)stars.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.2+.2,o:Math.random()*.6+.1,sp:Math.random()*.003+.001,ph:Math.random()*Math.PI*2});}
+  function draw(){ctx.clearRect(0,0,cv.width,cv.height);t+=.016;stars.forEach(s=>{const op=s.o*(.6+.4*Math.sin(t*s.sp*100+s.ph));ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(200,220,235,${op})`;ctx.fill();});requestAnimationFrame(draw);}
+  resize();init();draw();window.addEventListener('resize',()=>{resize();init();});
 })();
 
-// ── FLIPBOOK ENGINE ──
-function makeFlipbook(viewerId, prevId, nextId, counterId, fillId, trackId, pages) {
-  const viewer = document.getElementById(viewerId);
-  const prevBtn = document.getElementById(prevId);
-  const nextBtn = document.getElementById(nextId);
-  const counter = document.getElementById(counterId);
-  const fill = document.getElementById(fillId);
-  const track = document.getElementById(trackId);
+// ── FLIPBOOK ──
+function makeFlipbook(viewerId,prevId,nextId,counterId,fillId,trackId,spreads){
+  const viewer=document.getElementById(viewerId);
+  const prev=document.getElementById(prevId);
+  const next=document.getElementById(nextId);
+  const counter=document.getElementById(counterId);
+  const fill=document.getElementById(fillId);
+  const track=document.getElementById(trackId);
+  let cur=0;
+  const slots=[];
 
-  let current = 0;
-  const imgs = [];
-
-  // Create img elements
-  pages.forEach((src, i) => {
-    const img = document.createElement('img');
-    img.src = src;
-    img.alt = `Page ${i + 1}`;
-    img.loading = i === 0 ? 'eager' : 'lazy';
-    if (i === 0) img.classList.add('active');
-    viewer.appendChild(img);
-    imgs.push(img);
+  spreads.forEach((src,i)=>{
+    const div=document.createElement('div');
+    div.className='spread-slot';
+    if(i===0)div.classList.add('active');
+    const img=document.createElement('img');
+    img.src=src; img.alt=`Spread ${i+1}`;
+    div.appendChild(img);
+    viewer.appendChild(div);
+    slots.push(div);
   });
 
-  function goTo(idx) {
-    imgs[current].classList.remove('active');
-    current = Math.max(0, Math.min(idx, pages.length - 1));
-    imgs[current].classList.add('active');
-    counter.textContent = `${current + 1} / ${pages.length}`;
-    fill.style.width = `${((current + 1) / pages.length) * 100}%`;
-    prevBtn.disabled = current === 0;
-    nextBtn.disabled = current === pages.length - 1;
+  function goTo(idx){
+    slots[cur].classList.remove('active');
+    cur=Math.max(0,Math.min(idx,spreads.length-1));
+    slots[cur].classList.add('active');
+    counter.textContent=`${cur+1} / ${spreads.length}`;
+    fill.style.width=`${((cur+1)/spreads.length)*100}%`;
+    prev.disabled=cur===0;
+    next.disabled=cur===spreads.length-1;
   }
 
-  prevBtn.addEventListener('click', () => goTo(current - 1));
-  nextBtn.addEventListener('click', () => goTo(current + 1));
-
-  // Keyboard (when focused)
-  viewer.setAttribute('tabindex', '0');
-  viewer.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current + 1);
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current - 1);
+  prev.addEventListener('click',()=>goTo(cur-1));
+  next.addEventListener('click',()=>goTo(cur+1));
+  track.addEventListener('click',e=>{
+    const r=track.getBoundingClientRect();
+    goTo(Math.round((e.clientX-r.left)/r.width*(spreads.length-1)));
   });
-
-  // Click track to seek
-  track.addEventListener('click', e => {
-    const rect = track.getBoundingClientRect();
-    const pct = (e.clientX - rect.left) / rect.width;
-    goTo(Math.round(pct * (pages.length - 1)));
-  });
-
-  // Touch swipe
-  let touchStartX = 0;
-  viewer.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
-  viewer.addEventListener('touchend', e => {
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    if (dx < -40) goTo(current + 1);
-    if (dx > 40) goTo(current - 1);
-  });
-
+  let tx=0;
+  viewer.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
+  viewer.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(dx<-40)goTo(cur+1);if(dx>40)goTo(cur-1);});
   goTo(0);
 }
 
-// ── PAGE LISTS ──
-const part1Pages = Array.from({length:12}, (_,i) => `project_imgs/part1_pg-${String(i+1).padStart(2,'0')}.jpg`);
-const part2Pages = Array.from({length:10}, (_,i) => `project_imgs/part2_pg-${String(i+1).padStart(2,'0')}.jpg`);
-const part3Pages = Array.from({length:30}, (_,i) => `project_imgs/part3_pg-${String(i+1).padStart(2,'0')}.jpg`);
+// ── INIT PARTS 1 & 2 ──
+document.getElementById('cover1').src=PART1.cover;
+document.getElementById('cover2').src=PART2.cover;
+makeFlipbook('viewer1','prev1','next1','counter1','fill1','track1',PART1.spreads);
+makeFlipbook('viewer2','prev2','next2','counter2','fill2','track2',PART2.spreads);
 
-makeFlipbook('viewer1','prev1','next1','counter1','fill1','track1', part1Pages);
-makeFlipbook('viewer2','prev2','next2','counter2','fill2','track2', part2Pages);
-makeFlipbook('viewer3','prev3','next3','counter3','fill3','track3', part3Pages);
+// ── PART 3 AUTO-SCROLL ──
+(function(){
+  var clip   = document.getElementById('scrollClip');
+  var wrap   = document.getElementById('stripWrap');
+  var strip  = document.getElementById('strip3');
+  var toggle = document.getElementById('scrollToggle');
+  var label  = document.getElementById('scrollLabel');
+
+  document.getElementById('cover3').src = PART3.cover;
+
+  PART3.spreads.forEach(function(src, i){
+    var img = document.createElement('img');
+    img.src = src; img.alt = 'Spread '+(i+1);
+    strip.appendChild(img);
+  });
+  var bc = document.createElement('img');
+  bc.src = PART3.back; bc.alt = 'Back Cover';
+  strip.appendChild(bc);
+
+  var speed = 0.9, running = true, hovering = false, offset = 0;
+
+  function clipW()  { return clip.offsetWidth; }
+  function stripW() { return strip.offsetWidth; }
+  function maxOff() { return Math.max(0, stripW() - clipW()); }
+
+  function move() {
+    var m = maxOff();
+    if (offset > m) offset = 0;
+    if (offset < 0) offset = 0;
+    strip.style.left = '-' + offset + 'px';
+    if (m > 0) label.textContent = Math.round(offset/m*100)+'%  ·  hover to pause';
+  }
+
+  var poll = setInterval(function(){
+    if (stripW() > clipW()) {
+      clearInterval(poll);
+      requestAnimationFrame(function tick(){
+        if (running && !hovering) { offset += speed; move(); }
+        requestAnimationFrame(tick);
+      });
+    }
+  }, 100);
+
+  toggle.addEventListener('click', function(){
+    running = !running;
+    toggle.textContent = running ? '⏸ Pause' : '▶ Play';
+  });
+  wrap.addEventListener('mouseenter', function(){ hovering=true;  label.textContent='Paused'; });
+  wrap.addEventListener('mouseleave', function(){ hovering=false; });
+
+  var dragging=false, dragX=0, dragOff=0;
+  wrap.addEventListener('mousedown', function(e){
+    dragging=true; dragX=e.clientX; dragOff=offset;
+    running=false; toggle.textContent='▶ Play'; e.preventDefault();
+  });
+  window.addEventListener('mousemove', function(e){
+    if(!dragging) return;
+    offset = Math.max(0, Math.min(dragOff+(dragX-e.clientX), maxOff()));
+    move();
+  });
+  window.addEventListener('mouseup', function(){ dragging=false; });
+
+  var tx=0, toff=0;
+  wrap.addEventListener('touchstart', function(e){ tx=e.touches[0].clientX; toff=offset; running=false; toggle.textContent='▶ Play'; },{passive:true});
+  wrap.addEventListener('touchmove', function(e){
+    offset = Math.max(0, Math.min(toff+(tx-e.touches[0].clientX), maxOff()));
+    move();
+  },{passive:true});
+
+  document.querySelectorAll('.speed-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      speed=parseFloat(btn.dataset.speed);
+      document.querySelectorAll('.speed-btn').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active'); running=true; toggle.textContent='⏸ Pause';
+    });
+  });
+})();
 
 // ── PROCESS GALLERY ──
-const processImgs = [
-  { src: 'project_imgs/IMG_9381_cropped.jpg', cap: 'Research sketchbook — New Zealand trip, 2022' },
-  { src: 'project_imgs/IMG_9382_cropped.jpg', cap: 'Nature Museum visit — Kea specimen study' },
-  { src: 'project_imgs/IMG_9388_cropped.jpg', cap: 'Shanghai Natural History Museum — character research' },
-  { src: 'project_imgs/IMG_9396_cropped.jpg', cap: 'Storyboard sketches — museum scene, escape sequence' },
-  { src: 'project_imgs/IMG_9407_cropped.jpg', cap: 'Migration storyboard — Planet Earth reference studies' },
-];
-
-const gallery = document.getElementById('processGallery');
-processImgs.forEach(item => {
-  const div = document.createElement('div');
-  div.className = 'gallery-item';
-  div.innerHTML = `<img src="${item.src}" alt="${item.cap}" loading="lazy"><div class="gallery-item-cap">${item.cap}</div>`;
-  div.addEventListener('click', () => openLightbox(item.src));
+const gallery=document.getElementById('processGallery');
+PROCESS.forEach(item=>{
+  const div=document.createElement('div');
+  div.className='gallery-item';
+  div.innerHTML=`<img src="${item.src}" alt="${item.cap}" loading="lazy"><div class="gallery-item-cap">${item.cap}</div>`;
+  div.addEventListener('click',()=>{ document.getElementById('lbImg').src=item.src; document.getElementById('lightbox').classList.add('open'); document.body.style.overflow='hidden'; });
   gallery.appendChild(div);
 });
 
 // ── LIGHTBOX ──
-const lb = document.getElementById('lightbox');
-const lbImg = document.getElementById('lbImg');
-const lbClose = document.getElementById('lbClose');
-
-function openLightbox(src) {
-  lbImg.src = src;
-  lb.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeLightbox() {
-  lb.classList.remove('open');
-  document.body.style.overflow = '';
-}
-lbClose.addEventListener('click', closeLightbox);
-lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+const lb=document.getElementById('lightbox');
+document.getElementById('lbClose').addEventListener('click',()=>{ lb.classList.remove('open'); document.body.style.overflow=''; });
+lb.addEventListener('click',e=>{ if(e.target===lb){ lb.classList.remove('open'); document.body.style.overflow=''; } });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ lb.classList.remove('open'); document.body.style.overflow=''; } });
 </script>
 </body>
 </html>
